@@ -1,0 +1,4293 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>ВЫХОД В НОКАУТ! — Plavwly Games</title>
+    <style>
+        /* =========================================================
+           БАЗОВЫЕ ПЕРЕМЕННЫЕ И СТИЛИ (СПОКОЙНАЯ ЭСТЕТИКА PLAVWLY)
+           ========================================================= */
+        :root {
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.78);
+            --glass-bg-strong: rgba(255, 255, 255, 0.92);
+            --glass-dark: rgba(15, 23, 42, 0.72);
+            --glass-border: rgba(255, 255, 255, 0.65);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --accent: #0284c7;
+            --accent-hover: #0369a1;
+            --accent-soft: rgba(2, 132, 199, 0.14);
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --vr-accent: #7c3aed;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-soft: 0 20px 50px rgba(15, 23, 42, 0.16);
+            --shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            touch-action: none;
+        }
+
+        #canvas-container canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* =========================================================
+           ЗАСТАВКА PLAVWLY GAMES
+           ========================================================= */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 50% 35%, #1e293b 0%, #0b1120 75%);
+            color: #f8fafc;
+            padding: 24px;
+            transition: opacity 0.7s ease, visibility 0.7s ease;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .splash-glow {
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.25), rgba(124, 58, 237, 0.08) 55%, transparent 72%);
+            filter: blur(28px);
+            animation: pulseGlow 5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(0.95); opacity: 0.75; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .splash-card {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 460px;
+            width: 100%;
+            animation: floatIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes floatIn {
+            from { opacity: 0; transform: translateY(18px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .splash-emblem {
+            width: 82px;
+            height: 82px;
+            margin: 0 auto 20px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 18px 40px rgba(56, 189, 248, 0.35);
+            font-size: 38px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+        }
+
+        .splash-studio {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #f8fafc, #bae6fd, #f8fafc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .splash-sub {
+            font-size: 14px;
+            color: #94a3b8;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+        }
+
+        .splash-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-splash-primary {
+            width: 100%;
+            max-width: 310px;
+            padding: 15px 24px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(2, 132, 199, 0.38);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-splash-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 34px rgba(56, 189, 248, 0.45);
+        }
+
+        .btn-splash-secondary {
+            width: 100%;
+            max-width: 310px;
+            padding: 13px 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.08);
+            color: #e2e8f0;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-splash-secondary:hover {
+            background: rgba(255, 255, 255, 0.16);
+            transform: translateY(-1px);
+        }
+
+        /* =========================================================
+           ГЛАВНОЕ МЕНЮ (СПОКОЙНЫЙ GLASSMORPHISM НАД 3D-ОФИСОМ)
+           ========================================================= */
+        #main-menu {
+            position: fixed;
+            inset: 0;
+            z-index: 40;
+            display: flex;
+            flex-direction: column;
+            padding: 18px 22px;
+            background: linear-gradient(135deg, rgba(241, 245, 249, 0.42), rgba(226, 232, 240, 0.16));
+            overflow-y: auto;
+            transition: opacity 0.35s ease;
+        }
+
+        .menu-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            max-width: 1080px;
+            width: 100%;
+            margin: 0 auto 16px;
+            flex-wrap: wrap;
+        }
+
+        .brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: var(--glass-bg-strong);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(14px);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .icon-pill-btn {
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg-strong);
+            color: var(--text-main);
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(14px);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        .icon-pill-btn:hover {
+            transform: translateY(-1px);
+            background: #ffffff;
+        }
+
+        .menu-center {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 1080px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 18px;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        @media (max-width: 860px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(18px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .game-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+        }
+
+        .game-title {
+            font-size: clamp(28px, 4vw, 42px);
+            line-height: 1.08;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+        }
+
+        .game-desc {
+            font-size: 14px;
+            line-height: 1.55;
+            color: var(--text-muted);
+        }
+
+        /* Карточка Во весь экран перед игрой */
+        .fullscreen-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 13px 16px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.14), rgba(99, 102, 241, 0.12));
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            flex-wrap: wrap;
+        }
+
+        .fullscreen-banner-text {
+            font-size: 13px;
+            color: #0f172a;
+            line-height: 1.35;
+        }
+
+        .fullscreen-banner-text strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .btn-fs-highlight {
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: none;
+            background: #0f172a;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        .btn-fs-highlight:hover {
+            background: #1e293b;
+            transform: translateY(-1px);
+        }
+
+        .menu-cta-stack {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        @media (max-width: 520px) {
+            .menu-cta-stack {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn-play-main {
+            grid-column: 1 / -1;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 12px 26px rgba(37, 99, 235, 0.32);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-play-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(37, 99, 235, 0.42);
+        }
+
+        .btn-play-vr {
+            padding: 13px 16px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 22px rgba(124, 58, 237, 0.28);
+            transition: transform 0.18s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-play-vr:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary-menu {
+            padding: 13px 16px;
+            border: 1px solid rgba(15, 23, 42, 0.14);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.85);
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.18s ease, background 0.18s ease;
+        }
+
+        .btn-secondary-menu:hover {
+            background: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        /* Правая панель настроек HR */
+        .section-label {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .career-box {
+            padding: 14px 16px;
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .career-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        .career-rank {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .career-stats {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.1);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #0ea5e9, #10b981);
+            transition: width 0.4s ease;
+        }
+
+        .option-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .choice-btn {
+            padding: 10px 8px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(15, 23, 42, 0.12);
+            background: rgba(255, 255, 255, 0.72);
+            color: var(--text-main);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.16s ease;
+            text-align: center;
+        }
+
+        .choice-btn:hover {
+            background: #fff;
+        }
+
+        .choice-btn.active {
+            border-color: var(--accent);
+            background: rgba(2, 132, 199, 0.14);
+            color: var(--accent-hover);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.16);
+        }
+
+        .vr-status-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(124, 58, 237, 0.08);
+            border: 1px solid rgba(124, 58, 237, 0.18);
+            line-height: 1.4;
+        }
+
+        /* =========================================================
+           МОДАЛЬНОЕ ОКНО ПРАВИЛ И УПРАВЛЕНИЯ
+           ========================================================= */
+        #rules-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-card {
+            max-width: 560px;
+            width: 100%;
+            max-height: 88vh;
+            overflow-y: auto;
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 24px;
+            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.3);
+            color: #0f172a;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .btn-close-modal {
+            border: none;
+            background: #f1f5f9;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            color: #334155;
+        }
+
+        .rules-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #334155;
+            margin-bottom: 18px;
+        }
+
+        .rules-list div {
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-danger-soft {
+            padding: 9px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(220, 38, 38, 0.25);
+            background: rgba(220, 38, 38, 0.08);
+            color: #b91c1c;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* =========================================================
+           ИГРОВОЙ HUD (FPS)
+           ========================================================= */
+        #hud {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 14px 16px;
+        }
+
+        .hud-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hud-stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            pointer-events: auto;
+        }
+
+        .stat-chip {
+            padding: 7px 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+            backdrop-filter: blur(10px);
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-chip.coffee {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+            border-color: #f59e0b;
+        }
+
+        .hud-controls-top {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            pointer-events: auto;
+        }
+
+        .hud-mini-btn {
+            padding: 8px 12px;
+            border-radius: 11px;
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.86);
+            color: #0f172a;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+            backdrop-filter: blur(10px);
+        }
+
+        .hud-mini-btn:hover {
+            background: #ffffff;
+        }
+
+        /* Центральный прицел */
+        #crosshair {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            pointer-events: none;
+            z-index: 25;
+            transition: transform 0.12s ease;
+        }
+
+        #crosshair::before,
+        #crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(15, 23, 42, 0.72);
+            border-radius: 2px;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.85);
+            transition: background 0.12s ease;
+        }
+
+        #crosshair::before {
+            left: 11px;
+            top: 3px;
+            width: 2px;
+            height: 18px;
+        }
+
+        #crosshair::after {
+            top: 11px;
+            left: 3px;
+            width: 18px;
+            height: 2px;
+        }
+
+        #crosshair.target-locked {
+            transform: translate(-50%, -50%) scale(1.22);
+        }
+
+        #crosshair.target-locked::before,
+        #crosshair.target-locked::after {
+            background: #0284c7;
+        }
+
+        #hitmarker {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            width: 30px;
+            height: 30px;
+            transform: translate(-50%, -50%) rotate(45deg) scale(0.7);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 26;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+
+        #hitmarker.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(45deg) scale(1.1);
+        }
+
+        #hitmarker::before,
+        #hitmarker::after {
+            content: '';
+            position: absolute;
+            background: #0ea5e9;
+            border-radius: 2px;
+        }
+
+        #hitmarker::before { left: 14px; top: 0; width: 2px; height: 30px; }
+        #hitmarker::after { top: 14px; left: 0; width: 30px; height: 2px; }
+
+        /* Подсказка взаимодействия [E] */
+        #interact-prompt {
+            position: fixed;
+            left: 50%;
+            top: calc(50% + 28px);
+            transform: translateX(-50%);
+            padding: 7px 14px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.82);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            pointer-events: none;
+            z-index: 25;
+            white-space: nowrap;
+        }
+
+        /* Подсказка захвата мыши */
+        #pointer-lock-hint {
+            position: fixed;
+            top: 66px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.7);
+            color: #f8fafc;
+            font-size: 12px;
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 22;
+        }
+
+        /* Диалоговое окно и проверка телефона */
+        .dialogue-stage {
+            position: fixed;
+            left: 50%;
+            bottom: 88px;
+            transform: translateX(-50%);
+            width: min(640px, calc(100% - 28px));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            pointer-events: none;
+            z-index: 24;
+        }
+
+        #phone-inspect-card {
+            width: min(300px, 100%);
+            background: #0f172a;
+            color: #f8fafc;
+            border-radius: 22px;
+            padding: 12px;
+            border: 3px solid #334155;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
+            pointer-events: auto;
+        }
+
+        .phone-screen-inner {
+            background: #f8fafc;
+            color: #0f172a;
+            border-radius: 14px;
+            padding: 12px;
+            font-size: 12px;
+        }
+
+        .phone-app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 900;
+            font-size: 13px;
+            color: #0284c7;
+        }
+
+        .phone-profile-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .phone-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 2px solid #cbd5e1;
+        }
+
+        .phone-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 11px;
+            background: #e0f2fe;
+            color: #0369a1;
+            margin-top: 4px;
+        }
+
+        .phone-meta {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        #dialogue-box {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 18px;
+            padding: 12px 16px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
+            backdrop-filter: blur(12px);
+        }
+
+        .dialogue-speaker {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #0284c7;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .dialogue-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.38;
+        }
+
+        /* Нижняя панель действий */
+        .hud-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            pointer-events: auto;
+        }
+
+        .action-btn {
+            padding: 11px 15px;
+            border-radius: 13px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            background: rgba(255, 255, 255, 0.92);
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+            transition: transform 0.12s ease, background 0.12s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            background: #ffffff;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: #fff;
+            border: none;
+        }
+
+        .action-btn.success {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: #fff;
+            border: none;
+        }
+
+        .action-btn.water {
+            background: linear-gradient(135deg, #06b6d4, #0284c7);
+            color: #fff;
+            border: none;
+        }
+
+        .action-btn.phone-ring {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            border: none;
+            animation: ringPulse 0.7s ease-in-out infinite alternate;
+        }
+
+        @keyframes ringPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.06); }
+        }
+
+        /* Всплывающее уведомление */
+        #toast {
+            position: fixed;
+            top: 96px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            padding: 10px 18px;
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.9);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.28);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 60;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            text-align: center;
+            max-width: min(460px, calc(100% - 32px));
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #toast.good { background: rgba(21, 128, 61, 0.94); }
+        #toast.bad { background: rgba(185, 28, 28, 0.94); }
+        #toast.info { background: rgba(2, 132, 199, 0.94); }
+
+        /* Мобильный джойстик */
+        #mobile-joystick-zone {
+            position: fixed;
+            left: 18px;
+            bottom: 92px;
+            width: 112px;
+            height: 112px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.22);
+            border: 2px solid rgba(255, 255, 255, 0.55);
+            z-index: 28;
+            pointer-events: auto;
+            touch-action: none;
+            display: none;
+        }
+
+        #mobile-joystick-knob {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 44px;
+            height: 44px;
+            margin-left: -22px;
+            margin-top: -22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.88);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (pointer: coarse) {
+            #mobile-joystick-zone.active-mobile {
+                display: block;
+            }
+        }
+
+        /* =========================================================
+           STEREO VR OVERLAY (CARDBOARD / РАЗДЕЛЁННЫЙ ЭКРАН)
+           ========================================================= */
+        #stereo-vr-ui {
+            position: fixed;
+            inset: 0;
+            z-index: 35;
+            pointer-events: none;
+        }
+
+        .vr-divider {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(0, 0, 0, 0.85);
+            transform: translateX(-1px);
+        }
+
+        .vr-eye-dot {
+            position: absolute;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.65);
+            transform: translate(-50%, -50%);
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .vr-eye-dot.left { left: 25%; }
+        .vr-eye-dot.right { left: 75%; }
+        .vr-eye-dot.gazing {
+            transform: translate(-50%, -50%) scale(1.65);
+            border-color: #38bdf8;
+        }
+
+        .vr-bar-top {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            pointer-events: auto;
+        }
+
+        .vr-bar-bottom {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            pointer-events: auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .vr-pill-btn {
+            padding: 8px 13px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(15, 23, 42, 0.78);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+        }
+
+        #fatal-error {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 3D СЦЕНА -->
+    <div id="canvas-container"></div>
+
+    <!-- ЗАСТАВКА PLAVWLY GAMES -->
+    <div id="splash-screen">
+        <div class="splash-glow"></div>
+        <div class="splash-card">
+            <div class="splash-emblem">P</div>
+            <div class="splash-studio">Plavwly Games</div>
+            <div class="splash-sub">Интерактивный 3D-офис • FPS &amp; VR</div>
+            <div class="splash-actions">
+                <button id="btnSplashFullscreen" class="btn-splash-primary">
+                    <span>⛶</span> Открыть во весь экран и продолжить
+                </button>
+                <button id="btnSplashContinue" class="btn-splash-secondary">
+                    Продолжить в обычном окне →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ГЛАВНОЕ МЕНЮ -->
+    <div id="main-menu" class="hidden">
+        <div class="menu-topbar">
+            <div class="brand-pill">
+                <span class="brand-dot"></span>
+                <span>PLAVWLY GAMES • HR-ОФИС</span>
+            </div>
+            <div class="topbar-actions">
+                <button id="btnMenuAudio" class="icon-pill-btn">🔊 Звук: Вкл</button>
+                <button id="btnMenuFsTop" class="icon-pill-btn">⛶ Во весь экран</button>
+            </div>
+        </div>
+
+        <div class="menu-center">
+            <div class="menu-grid">
+                <!-- Левая карточка -->
+                <div class="glass-panel">
+                    <div class="game-kicker">3D Офис от первого лица • FPS &amp; VR</div>
+                    <h1 class="game-title">ВЫХОД В НОКАУТ!</h1>
+                    <p class="game-desc">
+                        Добро пожаловать в дневной офис <strong>Plavwly</strong>! Ходите по кабинету, общайтесь с кандидатами-шариками, спрашивайте <em>«Ты зарегистрирован в Plavwly?»</em>, проверяйте их профили на телефоне, принимайте настоящих разработчиков под победный танец — и обливайте хитрецов из водяного пистолета!
+                    </p>
+
+                    <div class="fullscreen-banner">
+                        <div class="fullscreen-banner-text">
+                            <strong>Рекомендуется перед игрой</strong>
+                            Полный экран делает обзор 360° и VR-режим максимально плавными.
+                        </div>
+                        <button id="btnMenuFsBanner" class="btn-fs-highlight">
+                            <span>⛶</span> Во весь экран
+                        </button>
+                    </div>
+
+                    <div class="menu-cta-stack">
+                        <button id="btnStartFps" class="btn-play-main">
+                            ▶ Начать собеседования (FPS)
+                        </button>
+                        <button id="btnStartVr" class="btn-play-vr">
+                            🥽 Войти в VR
+                        </button>
+                        <button id="btnOpenRules" class="btn-secondary-menu">
+                            📋 Правила и управление
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Правая карточка -->
+                <div class="glass-panel">
+                    <div>
+                        <div class="section-label">Карьера HR-менеджера</div>
+                        <div class="career-box">
+                            <div class="career-row">
+                                <span id="menuRankName" class="career-rank">Стажёр HR</span>
+                                <span id="menuScoreText" class="career-stats">Принято: 0 • Облито: 0</span>
+                            </div>
+                            <div class="progress-track">
+                                <div id="menuRankProgress" class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="section-label">Освещение за окном</div>
+                        <div class="option-row">
+                            <button class="choice-btn light-theme-btn active" data-theme="day">☀️ День</button>
+                            <button class="choice-btn light-theme-btn" data-theme="morning">🌤️ Утро</button>
+                            <button class="choice-btn light-theme-btn" data-theme="sunset">🌅 Закат</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="section-label">Водяной пистолетик</div>
+                        <div class="option-row">
+                            <button class="choice-btn pistol-skin-btn active" data-skin="classic">💧 Аква</button>
+                            <button class="choice-btn pistol-skin-btn" data-skin="gold">🏆 Золотой</button>
+                            <button class="choice-btn pistol-skin-btn" data-skin="emerald">🌿 Изумруд</button>
+                        </div>
+                    </div>
+
+                    <div id="vrCapabilityNote" class="vr-status-note">
+                        🥽 Проверка VR-оборудования...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ПРАВИЛ -->
+    <div id="rules-modal" class="hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Правила и управление</h2>
+                <button id="btnCloseRules" class="btn-close-modal">✕</button>
+            </div>
+            <div class="rules-list">
+                <div><strong>1. Главный вопрос:</strong> Нажмите <b>[1]</b>, чтобы спросить кандидата: <em>«Ты зарегистрирован в Plavwly?»</em>. Можно также спросить <b>[2] «Что умеешь?»</b>.</div>
+                <div><strong>2. Проверка телефона:</strong> Если кандидат ответил <b>«Нет!»</b> — смело стреляйте водой (<b>ЛКМ</b> или <b>[F]</b>). Если сказал <b>«Да!»</b> — попросите доказать <b>[1]</b> и внимательно осмотрите экран смартфона!</div>
+                <div><strong>3. Остерегайтесь подделок:</strong> Ищите опечатки (<em>PLAVWLI</em>), просроченные пропуска, пометку <em>Paint</em> или отсутствие галочки <b>✓</b>. Настоящих разработчиков принимайте кнопкой <b>[1] «Приняты на работу!»</b> — они станцуют!</div>
+                <div><strong>4. Свободная ходьба (FPS):</strong> <b>WASD</b> — ходьба, <b>Shift</b> — бег, <b>Пробел</b> — прыжок, <b>Мышь</b> — обзор (клик по офису захватывает курсор, <b>Esc</b> освобождает).</div>
+                <div><strong>5. Интерактивный офис:</strong> Подойдите к <b>кулеру</b> и нажмите <b>[E]</b> (или <b>[R]</b>) для заправки воды. Выпейте <b>кофе</b> на столе <b>[E]</b> для ускорения. Отвечайте на звонки <b>красного телефона [E]</b>!</div>
+                <div><strong>6. Режим VR:</strong> Поддерживает нативный <b>WebXR</b> (стрельба курком, ходьба стиками и нажатие 3D-кнопок на терминале стола) и режим <b>Stereo VR</b> с гироскопом и управлением взглядом.</div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnResetProgress" class="btn-danger-soft">Сбросить прогресс</button>
+                <button id="btnCloseRulesOk" class="action-btn primary">Понятно!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ИГРОВОЙ HUD -->
+    <div id="hud" class="hidden">
+        <div class="hud-top">
+            <div class="hud-stats-bar">
+                <div class="stat-chip">🧑‍💻 Принято: <span id="hudHired">0</span></div>
+                <div class="stat-chip">💦 Облито: <span id="hudSoaked">0</span></div>
+                <div class="stat-chip">🔥 Серия: <span id="hudStreak">0</span></div>
+                <div class="stat-chip">💧 Вода: <span id="hudWater">8/8</span></div>
+                <div class="stat-chip">🏅 <span id="hudRank">Стажёр HR</span></div>
+                <div id="coffeeBoostBadge" class="stat-chip coffee hidden">☕ Турбо-кофе!</div>
+            </div>
+
+            <div class="hud-controls-top">
+                <button id="btnHudVr" class="hud-mini-btn">🥽 VR</button>
+                <button id="btnHudFs" class="hud-mini-btn" title="Во весь экран">⛶</button>
+                <button id="btnHudAudio" class="hud-mini-btn" title="Звук">🔊</button>
+                <button id="btnHudMenu" class="hud-mini-btn">☰ Меню</button>
+            </div>
+        </div>
+
+        <div id="pointer-lock-hint">Кликните по экрану для обзора мышью 360° • WASD — ходьба • Esc — курсор</div>
+        <div id="crosshair"></div>
+        <div id="hitmarker"></div>
+        <div id="interact-prompt" class="hidden">[E] Взаимодействовать</div>
+
+        <!-- Диалог и инспектор смартфона -->
+        <div class="dialogue-stage">
+            <div id="phone-inspect-card" class="hidden">
+                <div class="phone-screen-inner">
+                    <div class="phone-app-header">
+                        <span id="phoneAppTitle">PLAVWLY ID</span>
+                        <span id="phoneBattery">94% 🔋</span>
+                    </div>
+                    <div class="phone-profile-row">
+                        <div id="phoneAvatarDot" class="phone-avatar"></div>
+                        <div>
+                            <div id="phoneUserName" style="font-weight:800;font-size:13px;">@dev_user</div>
+                            <div id="phoneRoleLine" style="color:#475569;font-size:11px;">Разработчик</div>
+                            <span id="phoneVerifyBadge" class="phone-badge">✓ Подтверждён</span>
+                        </div>
+                    </div>
+                    <div class="phone-meta">
+                        <span id="phoneDate">Активен: 2026</span>
+                        <span id="phoneNote">Официальное приложение</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dialogue-box">
+                <div class="dialogue-speaker">
+                    <span id="speakerName">ОФИС PLAVWLY</span>
+                    <span id="candidateCounter" style="color:#64748b;">Кандидат #1</span>
+                </div>
+                <div id="dialogueText" class="dialogue-text">Ожидаем следующего кандидата у двери...</div>
+            </div>
+        </div>
+
+        <!-- Нижняя панель действий -->
+        <div class="hud-bottom">
+            <button id="btnAskPlavwly" class="action-btn primary hidden">[1] Ты зарегистрирован в Plavwly?</button>
+            <button id="btnAskSkill" class="action-btn hidden">[2] Что умеешь?</button>
+            <button id="btnAskProof" class="action-btn primary hidden">[1] Докажи! Покажи телефон</button>
+            <button id="btnHireCandidate" class="action-btn success hidden">[1] Приняты на работу!</button>
+            <button id="btnShootWater" class="action-btn water">🔫 Водяной пистолет [F]</button>
+            <button id="btnRefillWater" class="action-btn hidden">🚰 Заправить воду [R]</button>
+            <button id="btnAnswerDeskPhone" class="action-btn phone-ring hidden">☎️ Ответить директору [E]</button>
+        </div>
+
+        <!-- Мобильный джойстик -->
+        <div id="mobile-joystick-zone">
+            <div id="mobile-joystick-knob"></div>
+        </div>
+    </div>
+
+    <!-- STEREO VR ИНТЕРФЕЙС -->
+    <div id="stereo-vr-ui" class="hidden">
+        <div class="vr-divider"></div>
+        <div id="vrDotLeft" class="vr-eye-dot left"></div>
+        <div id="vrDotRight" class="vr-eye-dot right"></div>
+        <div class="vr-bar-top">
+            <button id="btnVrExitStereo" class="vr-pill-btn">✕ Выйти из VR</button>
+            <button id="btnVrGyro" class="vr-pill-btn">🧭 Гироскоп: Выкл</button>
+            <button id="btnVrFs" class="vr-pill-btn">⛶ Полный экран</button>
+        </div>
+        <div class="vr-bar-bottom">
+            <button id="btnVrQuickStep" class="vr-pill-btn">💬 Диалог</button>
+            <button id="btnVrShoot" class="vr-pill-btn">🔫 Выстрел водой</button>
+            <button id="btnVrRefill" class="vr-pill-btn">🚰 Заправить</button>
+        </div>
+    </div>
+
+    <!-- УВЕДОМЛЕНИЕ -->
+    <div id="toast"></div>
+
+    <!-- THREE.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        'use strict';
+
+        /* =========================================================
+           1. ЗВУКОВОЙ ДВИЖОК (ТОЛЬКО ЧИСТЫЕ SFX, БЕЗ ОЗВУЧКИ!)
+           ========================================================= */
+        class SoundEngine {
+            constructor() {
+                this.enabled = true;
+                this.ctx = null;
+            }
+
+            ensureContext() {
+                if (!this.enabled) return null;
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioCtx) return null;
+                    this.ctx = new AudioCtx();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume().catch(() => {});
+                }
+                return this.ctx;
+            }
+
+            playUiClick() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(620, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.07);
+            }
+
+            playWaterSquirt() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+
+                // Шумовая струя
+                const bufferSize = Math.floor(ctx.sampleRate * 0.22);
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.45));
+                }
+                const noise = ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(1600, now);
+                filter.frequency.exponentialRampToValueAtTime(520, now + 0.2);
+                filter.Q.value = 1.6;
+
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(0.28, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+                noise.start(now);
+
+                // Короткий «пшик» помпы
+                const osc = ctx.createOscillator();
+                const og = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(340, now);
+                osc.frequency.exponentialRampToValueAtTime(140, now + 0.09);
+                og.gain.setValueAtTime(0.12, now);
+                og.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                osc.connect(og);
+                og.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.11);
+            }
+
+            playSplashHit() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const freqs = [520, 740, 410];
+                freqs.forEach((f, idx) => {
+                    const osc = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(f, now + idx * 0.03);
+                    osc.frequency.exponentialRampToValueAtTime(f * 1.4, now + idx * 0.03 + 0.08);
+                    g.gain.setValueAtTime(0.09, now + idx * 0.03);
+                    g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.03 + 0.09);
+                    osc.connect(g);
+                    g.connect(ctx.destination);
+                    osc.start(now + idx * 0.03);
+                    osc.stop(now + idx * 0.03 + 0.1);
+                });
+            }
+
+            playEmptyClick() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const g = ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.exponentialRampToValueAtTime(90, now + 0.05);
+                g.gain.setValueAtTime(0.07, now);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+                osc.connect(g);
+                g.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.07);
+            }
+
+            playRefill() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                for (let i = 0; i < 4; i++) {
+                    const t = now + i * 0.075;
+                    const osc = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(320 + i * 110, t);
+                    osc.frequency.exponentialRampToValueAtTime(500 + i * 130, t + 0.06);
+                    g.gain.setValueAtTime(0.1, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+                    osc.connect(g);
+                    g.connect(ctx.destination);
+                    osc.start(t);
+                    osc.stop(t + 0.08);
+                }
+            }
+
+            playHireDance() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const notes = [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5];
+                notes.forEach((n, i) => {
+                    const t = now + i * 0.1;
+                    const osc = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(n, t);
+                    g.gain.setValueAtTime(0.13, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+                    osc.connect(g);
+                    g.connect(ctx.destination);
+                    osc.start(t);
+                    osc.stop(t + 0.2);
+                });
+            }
+
+            playMistake() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                [220, 175].forEach((f, i) => {
+                    const t = now + i * 0.12;
+                    const osc = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(f, t);
+                    g.gain.setValueAtTime(0.08, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+                    osc.connect(g);
+                    g.connect(ctx.destination);
+                    osc.start(t);
+                    osc.stop(t + 0.15);
+                });
+            }
+
+            playFootstep() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const g = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(115 + Math.random() * 25, now);
+                osc.frequency.exponentialRampToValueAtTime(48, now + 0.055);
+                g.gain.setValueAtTime(0.055, now);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+                osc.connect(g);
+                g.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.065);
+            }
+
+            playDoorSound() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const g = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(240, now);
+                osc.frequency.exponentialRampToValueAtTime(160, now + 0.14);
+                g.gain.setValueAtTime(0.05, now);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                osc.connect(g);
+                g.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.16);
+            }
+
+            playPhoneRing() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                for (let i = 0; i < 2; i++) {
+                    const t = now + i * 0.22;
+                    const osc = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(840, t);
+                    osc.frequency.setValueAtTime(1060, t + 0.07);
+                    g.gain.setValueAtTime(0.09, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+                    osc.connect(g);
+                    g.connect(ctx.destination);
+                    osc.start(t);
+                    osc.stop(t + 0.17);
+                }
+            }
+
+            playCoffeeSip() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const notes = [440, 554, 659];
+                notes.forEach((f, i) => {
+                    const t = now + i * 0.07;
+                    const osc = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(f, t);
+                    g.gain.setValueAtTime(0.09, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+                    osc.connect(g);
+                    g.connect(ctx.destination);
+                    osc.start(t);
+                    osc.stop(t + 0.13);
+                });
+            }
+        }
+
+        const audio = new SoundEngine();
+
+        /* =========================================================
+           2. БАЗА КАНДИДАТОВ-ШАРИКОВ PLAVWLY (14 УНИКАЛЬНЫХ ГЕРОЕВ)
+           ========================================================= */
+        const CANDIDATES = [
+            {
+                name: 'Максим Кодер',
+                color: 0x38bdf8,
+                accessory: 'glasses',
+                claimYes: true,
+                valid: true,
+                skill: 'Пишу чистый 3D-движок на WebGL и чиню баги до обеда!',
+                answer: 'Да! Конечно зарегистрирован в Plavwly, прямо сейчас покажу!',
+                phone: { app: 'PLAVWLY ID', user: '@max_coder', role: '3D-разработчик', badge: '✓ Подтверждён', date: 'Активен: 2026', note: 'Официальный аккаунт' }
+            },
+            {
+                name: 'Василий Прохожий',
+                color: 0xf97316,
+                accessory: 'cap',
+                claimYes: false,
+                valid: false,
+                skill: 'Я вообще зашёл посмотреть, где тут бесплатные печеньки.',
+                answer: 'Нет! А что это за Plavwly такое? Я не регистрировался!',
+                phone: null
+            },
+            {
+                name: 'Алина Пиксель',
+                color: 0xec4899,
+                accessory: 'headphones',
+                claimYes: true,
+                valid: true,
+                skill: 'Рисую интерфейсы, делаю шейдеры и обожаю светлые офисы!',
+                answer: 'Да! У меня аккаунт Plavwly ещё с прошлого релиза!',
+                phone: { app: 'PLAVWLY ID', user: '@alina_px', role: 'UI/UX Дизайнер', badge: '✓ Подтверждён', date: 'Активен: 2026', note: 'Официальный аккаунт' }
+            },
+            {
+                name: 'Хитрый Борисыч',
+                color: 0x84cc16,
+                accessory: 'sunglasses',
+                claimYes: true,
+                valid: false,
+                fakeReason: 'Опечатка в названии приложения: «PLAVWLI» вместо «PLAVWLY»!',
+                skill: 'Умею быстро копировать чужой код и красиво щуриться.',
+                answer: 'Да! Клянусь очками, я в системе! Смотри телефон!',
+                phone: { app: 'PLAVWLI ID', user: '@borys_real', role: 'Супер Программист', badge: '✓ Подтверждён?', date: 'Активен: 2026', note: 'Скачано с форума' }
+            },
+            {
+                name: 'Дмитрий Шейдер',
+                color: 0x6366f1,
+                accessory: 'visor',
+                claimYes: true,
+                valid: true,
+                skill: 'Настраиваю WebXR и VR-контроллеры с закрытыми глазами.',
+                answer: 'Да! Вот мой верифицированный профиль в Plavwly!',
+                phone: { app: 'PLAVWLY ID', user: '@dima_vr', role: 'VR-инженер', badge: '✓ Подтверждён', date: 'Активен: 2026', note: 'Официальный аккаунт' }
+            },
+            {
+                name: 'Гриша Сонный',
+                color: 0x94a3b8,
+                accessory: 'beanie',
+                claimYes: false,
+                valid: false,
+                skill: 'Могу спать на диване в зоне отдыха по 8 часов в день.',
+                answer: 'Нет! Забыл зарегистрироваться... Может так возьмёте?',
+                phone: null
+            },
+            {
+                name: 'Антон Пэинт',
+                color: 0xfacc15,
+                accessory: 'glasses',
+                claimYes: true,
+                valid: false,
+                fakeReason: 'Профиль нарисован в Paint и без подтверждения!',
+                skill: 'Владею программой Paint на уровне гроссмейстера.',
+                answer: 'Да! Вот же мой аккаунт, всё честно-пречестно!',
+                phone: { app: 'PLAVWLY.bmp', user: '@anton_123', role: 'Художник', badge: '⚠ Нарисовано в Paint', date: 'Дата: вчера', note: 'Скриншот из галереи' }
+            },
+            {
+                name: 'София Бэкенд',
+                color: 0x14b8a6,
+                accessory: 'glasses',
+                claimYes: true,
+                valid: true,
+                skill: 'Серверы под моей защитой держат миллион игроков без лагов.',
+                answer: 'Да! Зарегистрирована в Plavwly, сейчас покажу телефон!',
+                phone: { app: 'PLAVWLY ID', user: '@sofia_srv', role: 'Backend-инженер', badge: '✓ Подтверждён', date: 'Активен: 2026', note: 'Официальный аккаунт' }
+            },
+            {
+                name: 'Лёха Архивный',
+                color: 0xa855f7,
+                accessory: 'monocle',
+                claimYes: true,
+                valid: false,
+                fakeReason: 'Пропуск просрочен (2020 год) и статус «Заблокирован»!',
+                skill: 'Пишу на древнем коде, который никто не понимает.',
+                answer: 'Да! Взгляните на мой старинный профиль!',
+                phone: { app: 'PLAVWLY ID', user: '@leha_old', role: 'Архивариус', badge: '✕ Просрочен', date: 'Истёк: 2020', note: 'Доступ закрыт' }
+            },
+            {
+                name: 'Кирилл Геймдев',
+                color: 0xef4444,
+                accessory: 'headphones',
+                claimYes: true,
+                valid: true,
+                skill: 'Создаю весёлые механики, физику и пасхалки в играх!',
+                answer: 'Да! Я фанат Plavwly, аккаунт полностью подтверждён!',
+                phone: { app: 'PLAVWLY ID', user: '@kirill_gd', role: 'Геймдизайнер', badge: '✓ Подтверждён', date: 'Активен: 2026', note: 'Официальный аккаунт' }
+            },
+            {
+                name: 'Турист Семён',
+                color: 0x22c55e,
+                accessory: 'sunglasses',
+                claimYes: false,
+                valid: false,
+                skill: 'Я просто сфоткать ваш красивый вид из окна зашёл!',
+                answer: 'Нет! Никакого Plavwly у меня нет!',
+                phone: null
+            },
+            {
+                name: 'Елена Тестер',
+                color: 0xf43f5e,
+                accessory: 'cap',
+                claimYes: true,
+                valid: true,
+                skill: 'Нахожу любой баг за 15 секунд до релиза!',
+                answer: 'Да! Профиль Plavwly открыт прямо на экране!',
+                phone: { app: 'PLAVWLY ID', user: '@elena_qa', role: 'QA-инженер', badge: '✓ Подтверждён', date: 'Активен: 2026', note: 'Официальный аккаунт' }
+            },
+            {
+                name: 'Рома Фейк',
+                color: 0x0ea5e9,
+                accessory: 'beanie',
+                claimYes: true,
+                valid: false,
+                fakeReason: 'В профиле прямо написано «Не зарегистрирован»!',
+                skill: 'Я очень убедительно киваю на созвонах.',
+                answer: 'Да! Точно-точно есть профиль, глянь!',
+                phone: { app: 'PLAVWLY ID', user: 'Гость #404', role: 'Без роли', badge: '✕ Не зарегистрирован', date: 'Нет даты', note: 'Требуется вход' }
+            },
+            {
+                name: 'Артём Саунд',
+                color: 0xd97706,
+                accessory: 'tie',
+                claimYes: true,
+                valid: true,
+                skill: 'Делаю сочные звуки воды, шагов и победных фанфар!',
+                answer: 'Да! Конечно я в Plavwly, вот подтверждение!',
+                phone: { app: 'PLAVWLY ID', user: '@artem_sfx', role: 'Саунд-дизайнер', badge: '✓ Подтверждён', date: 'Активен: 2026', note: 'Официальный аккаунт' }
+            }
+        ];
+
+        const HR_RANKS = [
+            { name: 'Стажёр HR', min: 0 },
+            { name: 'Младший рекрутер', min: 4 },
+            { name: 'Специалист Plavwly', min: 10 },
+            { name: 'Старший HR', min: 18 },
+            { name: 'Лид-рекрутер', min: 28 },
+            { name: 'Директор по кадрам', min: 40 }
+        ];
+
+        const PISTOL_SKINS = {
+            classic: { body: 0x0284c7, accent: 0xf97316, nozzle: 0xfacc15 },
+            gold: { body: 0xeab308, accent: 0x1e293b, nozzle: 0xfef08a },
+            emerald: { body: 0x10b981, accent: 0x0f766e, nozzle: 0xa7f3d0 }
+        };
+
+        const LIGHT_THEMES = {
+            day: {
+                sky: 0x93c5fd,
+                fog: 0xe0f2fe,
+                sunColor: 0xfffbeb,
+                sunIntensity: 1.15,
+                hemiSky: 0xe0f2fe,
+                hemiGround: 0xd6d3d1,
+                hemiIntensity: 0.9,
+                sunPos: [8, 12, -10]
+            },
+            morning: {
+                sky: 0xbae6fd,
+                fog: 0xf1f5f9,
+                sunColor: 0xffedd5,
+                sunIntensity: 1.0,
+                hemiSky: 0xf0f9ff,
+                hemiGround: 0xe2e8f0,
+                hemiIntensity: 0.85,
+                sunPos: [-9, 8, -10]
+            },
+            sunset: {
+                sky: 0xfdba74,
+                fog: 0xfed7aa,
+                sunColor: 0xfb923c,
+                sunIntensity: 1.25,
+                hemiSky: 0xffedd5,
+                hemiGround: 0xcbd5e1,
+                hemiIntensity: 0.78,
+                sunPos: [10, 5, -10]
+            }
+        };
+
+        /* =========================================================
+           3. ГЛАВНЫЙ КЛАСС ИГРЫ: PLAVWLY OFFICE 3D (FPS + VR)
+           ========================================================= */
+        class PlavwlyOfficeGame {
+            constructor() {
+                this.container = document.getElementById('canvas-container');
+                this.appState = 'SPLASH'; // SPLASH | MENU | PLAYING
+
+                // Статистика и настройки
+                this.hiredCount = 0;
+                this.soakedCount = 0;
+                this.streak = 0;
+                this.candidateNumber = 0;
+                this.waterAmmo = 8;
+                this.maxWaterAmmo = 8;
+                this.pistolSkin = 'classic';
+                this.lightTheme = 'day';
+                this.coffeeBoostTimer = 0;
+                this.resetConfirmArmed = false;
+
+                // Состояние собеседования
+                this.deck = [];
+                this.currentCandidate = null;
+                this.candidateMesh = null;
+                this.candidateEyes = [];
+                this.candidatePhoneMesh = null;
+                this.turnPhase = 'IDLE'; // IDLE | WALK_IN | WAITING_ASK | ANSWERED | SHOWING_PHONE | DANCING | FLEEING
+                this.phaseTimer = 0;
+                this.doorAngle = 0;
+                this.doorTargetAngle = 0;
+
+                // Красный телефон директора
+                this.deskPhoneRinging = false;
+                this.deskPhoneTimer = 18;
+                this.deskPhoneRingSoundTimer = 0;
+
+                // FPS-игрок
+                this.playerHeight = 1.62;
+                this.playerPos = new THREE.Vector3(0, 0, 2.25);
+                this.playerVelY = 0;
+                this.onGround = true;
+                this.yaw = 0;
+                this.pitch = -0.04;
+                this.keys = {};
+                this.isPointerLocked = false;
+                this.isDraggingLook = false;
+                this.lastPointer = { x: 0, y: 0 };
+                this.dragMoved = false;
+                this.stepAccum = 0;
+                this.walkBobPhase = 0;
+                this.pistolRecoil = 0;
+                this.joyMove = { x: 0, y: 0 };
+                this.colliders = [];
+
+                // VR (WebXR + Stereo VR)
+                this.vrSupported = false;
+                this.stereoVrActive = false;
+                this.gyroEnabled = false;
+                this.gyroOffset = null;
+                this.gazeTarget = null;
+                this.gazeTime = 0;
+                this.vrControllers = [];
+                this.vrSnapCooldown = 0;
+                this.terminalButtons = [];
+                this.hoveredTerminalBtn = null;
+
+                // Эффекты и геометрии (оптимизация)
+                this.waterDroplets = [];
+                this.puddles = [];
+                this.confetti = [];
+                this.steamParticles = [];
+                this.dustMotes = [];
+                this.clock = new THREE.Clock();
+                this.lastClockTick = -1;
+                this.toastTimer = null;
+
+                this.sharedDropGeo = new THREE.SphereGeometry(0.036, 8, 8);
+                this.sharedPuddleGeo = new THREE.CircleGeometry(0.24, 14);
+                this.sharedConfettiGeo = new THREE.BoxGeometry(0.055, 0.055, 0.01);
+                this.sharedSteamGeo = new THREE.SphereGeometry(0.028, 6, 6);
+
+                this.loadProgress();
+                this.initThree();
+                this.buildOffice();
+                this.buildWaterPistol();
+                this.setupWebXRControllers();
+                this.bindEvents();
+                this.checkVrSupport();
+                this.applySavedVisualPrefs();
+                this.updateMenuStatsUI();
+                this.updateHudStats();
+                this.updateTerminalVisuals();
+
+                this.renderer.setAnimationLoop(() => this.animate());
+            }
+
+            /* ----------------- СОХРАНЕНИЕ ПРОГРЕССА ----------------- */
+            loadProgress() {
+                try {
+                    const raw = localStorage.getItem('plavwly_knockout_save_v3');
+                    if (!raw) return;
+                    const data = JSON.parse(raw);
+                    this.hiredCount = Number(data.hiredCount) || 0;
+                    this.soakedCount = Number(data.soakedCount) || 0;
+                    this.streak = Number(data.streak) || 0;
+                    if (PISTOL_SKINS[data.pistolSkin]) this.pistolSkin = data.pistolSkin;
+                    if (LIGHT_THEMES[data.lightTheme]) this.lightTheme = data.lightTheme;
+                } catch (_) {}
+            }
+
+            saveProgress() {
+                try {
+                    localStorage.setItem('plavwly_knockout_save_v3', JSON.stringify({
+                        hiredCount: this.hiredCount,
+                        soakedCount: this.soakedCount,
+                        streak: this.streak,
+                        pistolSkin: this.pistolSkin,
+                        lightTheme: this.lightTheme
+                    }));
+                } catch (_) {}
+            }
+
+            getRankInfo() {
+                const total = this.hiredCount + this.soakedCount;
+                let current = HR_RANKS[0];
+                let next = HR_RANKS[1];
+                for (let i = 0; i < HR_RANKS.length; i++) {
+                    if (total >= HR_RANKS[i].min) {
+                        current = HR_RANKS[i];
+                        next = HR_RANKS[i + 1] || null;
+                    }
+                }
+                const pct = next
+                    ? Math.min(100, Math.round(((total - current.min) / (next.min - current.min)) * 100))
+                    : 100;
+                return { name: current.name, pct, total };
+            }
+
+            /* ----------------- ИНИЦИАЛИЗАЦИЯ THREE.JS ----------------- */
+            initThree() {
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(LIGHT_THEMES.day.sky);
+                this.scene.fog = new THREE.Fog(LIGHT_THEMES.day.fog, 14, 34);
+
+                this.camera = new THREE.PerspectiveCamera(68, window.innerWidth / window.innerHeight, 0.05, 60);
+                this.playerRig = new THREE.Group();
+                this.playerRig.position.copy(this.playerPos);
+                this.camera.position.set(0, this.playerHeight, 0);
+                this.playerRig.add(this.camera);
+                this.scene.add(this.playerRig);
+
+                // Стерео-камера для Cardboard VR
+                this.stereoCam = new THREE.StereoCamera();
+                this.stereoCam.eyeSep = 0.064;
+
+                this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.renderer.xr.enabled = true;
+                if (this.renderer.xr.setReferenceSpaceType) {
+                    this.renderer.xr.setReferenceSpaceType('local-floor');
+                }
+                this.container.appendChild(this.renderer.domElement);
+
+                // Свет обычного дневного офиса
+                this.hemiLight = new THREE.HemisphereLight(0xe0f2fe, 0xd6d3d1, 0.9);
+                this.scene.add(this.hemiLight);
+
+                this.sunLight = new THREE.DirectionalLight(0xfffbeb, 1.15);
+                this.sunLight.position.set(8, 12, -10);
+                this.sunLight.castShadow = true;
+                this.sunLight.shadow.mapSize.set(1024, 1024);
+                this.sunLight.shadow.camera.near = 1;
+                this.sunLight.shadow.camera.far = 30;
+                const d = 8;
+                this.sunLight.shadow.camera.left = -d;
+                this.sunLight.shadow.camera.right = d;
+                this.sunLight.shadow.camera.top = d;
+                this.sunLight.shadow.camera.bottom = -d;
+                this.sunLight.shadow.bias = -0.0005;
+                this.scene.add(this.sunLight);
+
+                // Мягкий потолочный офисный свет
+                const ceilingLight1 = new THREE.PointLight(0xfffcf5, 0.45, 11);
+                ceilingLight1.position.set(-1.5, 3.3, 0.5);
+                this.scene.add(ceilingLight1);
+
+                const ceilingLight2 = new THREE.PointLight(0xfffcf5, 0.45, 11);
+                ceilingLight2.position.set(1.8, 3.3, 0.5);
+                this.scene.add(ceilingLight2);
+            }
+
+            /* ----------------- ПРОЦЕДУРНЫЕ ТЕКСТУРЫ ----------------- */
+            createParquetTexture() {
+                const c = document.createElement('canvas');
+                c.width = 512;
+                c.height = 512;
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = '#d6b48c';
+                ctx.fillRect(0, 0, 512, 512);
+                const rows = 8;
+                const cols = 4;
+                const rw = 512 / cols;
+                const rh = 512 / rows;
+                for (let r = 0; r < rows; r++) {
+                    for (let col = 0; col < cols; col++) {
+                        const offset = (r % 2) * (rw * 0.5);
+                        const x = (col * rw + offset) % 512;
+                        const shade = 195 + Math.floor(Math.random() * 24);
+                        ctx.fillStyle = `rgb(${shade}, ${shade - 32}, ${shade - 68})`;
+                        ctx.fillRect(x, r * rh, rw - 2, rh - 2);
+                        if (x + rw > 512) {
+                            ctx.fillRect(0, r * rh, (x + rw) - 512 - 2, rh - 2);
+                        }
+                        ctx.strokeStyle = 'rgba(110, 72, 36, 0.14)';
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(x, r * rh, rw - 1, rh - 1);
+                    }
+                }
+                const tex = new THREE.CanvasTexture(c);
+                tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+                tex.repeat.set(3.5, 3.2);
+                return tex;
+            }
+
+            createTextSignTexture(text, bg = '#ffffff', fg = '#0f172a', w = 512, h = 128, fontSize = 44) {
+                const c = document.createElement('canvas');
+                c.width = w;
+                c.height = h;
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = bg;
+                ctx.fillRect(0, 0, w, h);
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 8;
+                ctx.strokeRect(4, 4, w - 8, h - 8);
+                ctx.fillStyle = fg;
+                ctx.font = `800 ${fontSize}px Segoe UI, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(text, w / 2, h / 2);
+                return new THREE.CanvasTexture(c);
+            }
+
+            /* ----------------- ПОСТРОЙКА ДЕТАЛЬНОГО 3D-ОФИСА ----------------- */
+            addCollider(minX, maxX, minZ, maxZ) {
+                this.colliders.push({ minX, maxX, minZ, maxZ });
+            }
+
+            buildOffice() {
+                // Размеры комнаты: X [-4.6, 4.6], Z [-3.6, 4.2], высота Y = 3.6
+                const floorMat = new THREE.MeshStandardMaterial({
+                    map: this.createParquetTexture(),
+                    roughness: 0.72,
+                    metalness: 0.04
+                });
+                const floor = new THREE.Mesh(new THREE.PlaneGeometry(9.4, 8.0), floorMat);
+                floor.rotation.x = -Math.PI / 2;
+                floor.position.set(0, 0, 0.3);
+                floor.receiveShadow = true;
+                this.scene.add(floor);
+
+                // Потолок + офисные светильники
+                const ceilMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.92 });
+                const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(9.4, 8.0), ceilMat);
+                ceiling.rotation.x = Math.PI / 2;
+                ceiling.position.set(0, 3.6, 0.3);
+                this.scene.add(ceiling);
+
+                const panelMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const frameMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.5 });
+                [[-2, -0.5], [2, -0.5], [-2, 2.0], [2, 2.0]].forEach(([px, pz]) => {
+                    const frame = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.06, 0.55), frameMat);
+                    frame.position.set(px, 3.57, pz);
+                    this.scene.add(frame);
+                    const panel = new THREE.Mesh(new THREE.PlaneGeometry(1.18, 0.45), panelMat);
+                    panel.rotation.x = Math.PI / 2;
+                    panel.position.set(px, 3.535, pz);
+                    this.scene.add(panel);
+                });
+
+                // Светло-бежевые стены
+                const wallMat = new THREE.MeshStandardMaterial({ color: 0xf3eee6, roughness: 0.88 });
+                const accentWallMat = new THREE.MeshStandardMaterial({ color: 0xe9e3d8, roughness: 0.9 });
+                const trimMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.6 });
+
+                // Задняя стена с панорамным окном (Z = -3.6)
+                const backBottom = new THREE.Mesh(new THREE.BoxGeometry(9.4, 0.95, 0.2), wallMat);
+                backBottom.position.set(0, 0.475, -3.6);
+                backBottom.receiveShadow = true;
+                this.scene.add(backBottom);
+
+                const backTop = new THREE.Mesh(new THREE.BoxGeometry(9.4, 0.6, 0.2), wallMat);
+                backTop.position.set(0, 3.3, -3.6);
+                this.scene.add(backTop);
+
+                const backLeft = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.05, 0.2), wallMat);
+                backLeft.position.set(-3.8, 1.975, -3.6);
+                this.scene.add(backLeft);
+
+                const backRight = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.05, 0.2), wallMat);
+                backRight.position.set(3.8, 1.975, -3.6);
+                this.scene.add(backRight);
+
+                // Оконная рама и стекло
+                const winFrameMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
+                [-2.9, -1.0, 1.0, 2.9].forEach(wx => {
+                    const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.08, 2.05, 0.14), winFrameMat);
+                    mullion.position.set(wx, 1.975, -3.58);
+                    this.scene.add(mullion);
+                });
+                const sill = new THREE.Mesh(new THREE.BoxGeometry(6.0, 0.08, 0.34), winFrameMat);
+                sill.position.set(0, 0.96, -3.52);
+                this.scene.add(sill);
+
+                const glassMat = new THREE.MeshPhysicalMaterial({
+                    color: 0xe0f2fe,
+                    transparent: true,
+                    opacity: 0.16,
+                    roughness: 0.1
+                });
+                const windowGlass = new THREE.Mesh(new THREE.PlaneGeometry(5.8, 2.0), glassMat);
+                windowGlass.position.set(0, 1.975, -3.58);
+                this.scene.add(windowGlass);
+
+                // Вид за окном: зелёный парк, деревья и светлый город
+                this.buildOutsideView();
+
+                // Левая стена (X = -4.6)
+                const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.2, 3.6, 8.0), accentWallMat);
+                leftWall.position.set(-4.6, 1.8, 0.3);
+                leftWall.receiveShadow = true;
+                this.scene.add(leftWall);
+
+                // Правая стена (X = 4.6) с дверным проёмом (Z от -2.4 до -1.1)
+                const rightWallFront = new THREE.Mesh(new THREE.BoxGeometry(0.2, 3.6, 5.4), accentWallMat);
+                rightWallFront.position.set(4.6, 1.8, 1.6);
+                rightWallFront.receiveShadow = true;
+                this.scene.add(rightWallFront);
+
+                const rightWallBack = new THREE.Mesh(new THREE.BoxGeometry(0.2, 3.6, 1.3), accentWallMat);
+                rightWallBack.position.set(4.6, 1.8, -3.05);
+                this.scene.add(rightWallBack);
+
+                const rightWallTopDoor = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.25, 1.3), accentWallMat);
+                rightWallTopDoor.position.set(4.6, 2.975, -1.75);
+                this.scene.add(rightWallTopDoor);
+
+                // Коридор за дверью
+                const corridorFloor = new THREE.Mesh(
+                    new THREE.PlaneGeometry(4.0, 3.4),
+                    new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.85 })
+                );
+                corridorFloor.rotation.x = -Math.PI / 2;
+                corridorFloor.position.set(6.5, 0.002, -1.75);
+                this.scene.add(corridorFloor);
+
+                const corridorBack = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.2, 3.6, 3.4),
+                    new THREE.MeshStandardMaterial({ color: 0xede9fe, roughness: 0.9 })
+                );
+                corridorBack.position.set(8.3, 1.8, -1.75);
+                this.scene.add(corridorBack);
+
+                // Табличка над дверью
+                const doorSign = new THREE.Mesh(
+                    new THREE.PlaneGeometry(1.15, 0.28),
+                    new THREE.MeshBasicMaterial({
+                        map: this.createTextSignTexture('HR-КАБИНЕТ PLAVWLY', '#0f172a', '#f8fafc', 512, 128, 36)
+                    })
+                );
+                doorSign.position.set(4.48, 2.68, -1.75);
+                doorSign.rotation.y = -Math.PI / 2;
+                this.scene.add(doorSign);
+
+                // Анимированная деревянная 3D-дверь
+                this.doorPivot = new THREE.Group();
+                this.doorPivot.position.set(4.52, 0, -2.35);
+                const doorWoodMat = new THREE.MeshStandardMaterial({ color: 0x9a6b42, roughness: 0.62 });
+                const doorPanel = new THREE.Mesh(new THREE.BoxGeometry(0.08, 2.32, 1.22), doorWoodMat);
+                doorPanel.position.set(0, 1.16, 0.61);
+                doorPanel.castShadow = true;
+                this.doorPivot.add(doorPanel);
+
+                const doorGlass = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.09, 0.85, 0.56),
+                    new THREE.MeshStandardMaterial({ color: 0xdbeafe, transparent: true, opacity: 0.55, roughness: 0.2 })
+                );
+                doorGlass.position.set(0, 1.56, 0.61);
+                this.doorPivot.add(doorGlass);
+
+                const handleMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.7, roughness: 0.25 });
+                const handle1 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.04, 0.14), handleMat);
+                handle1.position.set(-0.07, 1.05, 1.06);
+                this.doorPivot.add(handle1);
+                this.scene.add(this.doorPivot);
+
+                // Передняя стена за спиной игрока (Z = 4.2)
+                const frontWall = new THREE.Mesh(new THREE.BoxGeometry(9.4, 3.6, 0.2), wallMat);
+                frontWall.position.set(0, 1.8, 4.2);
+                frontWall.receiveShadow = true;
+                this.scene.add(frontWall);
+
+                // Плинтусы
+                const baseBack = new THREE.Mesh(new THREE.BoxGeometry(9.2, 0.12, 0.04), trimMat);
+                baseBack.position.set(0, 0.06, -3.48);
+                this.scene.add(baseBack);
+
+                // --- РАБОЧИЙ СТОЛ HR (ЦЕНТР ОФИСА) ---
+                this.buildHrDesk();
+
+                // --- КРЕСЛО HR ---
+                this.buildOfficeChair(0, 2.48);
+
+                // --- КУЛЕР С ВОДОЙ (СПРАВА ОТ СТОЛА) ---
+                this.buildWaterCooler(3.75, 0.85);
+
+                // --- МАРКЕРНАЯ ДОСКА И ЧАСЫ (ЛЕВАЯ СТЕНА) ---
+                this.buildWhiteboardAndClock();
+
+                // --- ШКАФ С ПАПКАМИ (ЗАДНЯЯ ЛЕВАЯ ЧАСТЬ) ---
+                this.buildBookshelf(-3.75, -2.55);
+
+                // --- ЗОНА ОТДЫХА С ДИВАНОМ (ПЕРЕДНЯЯ ЛЕВАЯ ЧАСТЬ) ---
+                this.buildLoungeArea();
+
+                // --- КОМНАТНЫЕ РАСТЕНИЯ (ФИКУСЫ) ---
+                this.buildPlant(3.8, -2.95);
+                this.buildPlant(-3.8, 3.25);
+
+                // --- ЛЕТАЮЩИЕ ПЫЛИНКИ В СОЛНЕЧНОМ СВЕТЕ ---
+                const moteGeo = new THREE.SphereGeometry(0.014, 5, 5);
+                const moteMat = new THREE.MeshBasicMaterial({ color: 0xfffbeb, transparent: true, opacity: 0.45 });
+                for (let i = 0; i < 36; i++) {
+                    const mote = new THREE.Mesh(moteGeo, moteMat);
+                    mote.position.set(
+                        (Math.random() - 0.5) * 7.4,
+                        0.7 + Math.random() * 2.4,
+                        (Math.random() - 0.5) * 6.2
+                    );
+                    mote.userData.phase = Math.random() * Math.PI * 2;
+                    this.scene.add(mote);
+                    this.dustMotes.push(mote);
+                }
+            }
+
+            buildOutsideView() {
+                const park = new THREE.Mesh(
+                    new THREE.PlaneGeometry(40, 20),
+                    new THREE.MeshStandardMaterial({ color: 0x86efac, roughness: 0.95 })
+                );
+                park.rotation.x = -Math.PI / 2;
+                park.position.set(0, -0.3, -14);
+                this.scene.add(park);
+
+                // Деревья
+                const trunkMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.9 });
+                const leafMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.85 });
+                [[-6, -8], [-2.5, -10], [2.2, -9.2], [5.8, -8.5], [0, -12]].forEach(([tx, tz]) => {
+                    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.24, 1.8, 7), trunkMat);
+                    trunk.position.set(tx, 0.6, tz);
+                    this.scene.add(trunk);
+                    const crown = new THREE.Mesh(new THREE.SphereGeometry(1.15, 10, 10), leafMat);
+                    crown.position.set(tx, 2.2, tz);
+                    this.scene.add(crown);
+                });
+
+                // Светлые здания города на горизонте
+                const bColors = [0xdbeafe, 0xe2e8f0, 0xf1f5f9, 0xcbd5e1];
+                for (let i = -5; i <= 5; i++) {
+                    const h = 4 + ((Math.abs(i * 7) % 5) * 1.4);
+                    const b = new THREE.Mesh(
+                        new THREE.BoxGeometry(2.2, h, 2.2),
+                        new THREE.MeshStandardMaterial({ color: bColors[Math.abs(i) % bColors.length], roughness: 0.7 })
+                    );
+                    b.position.set(i * 2.9, h / 2 - 0.5, -18 - (Math.abs(i) % 3) * 2.5);
+                    this.scene.add(b);
+                }
+            }
+
+            buildHrDesk() {
+                const deskGroup = new THREE.Group();
+                deskGroup.position.set(0, 0, 0.85);
+
+                const oakMat = new THREE.MeshStandardMaterial({ color: 0xc89f72, roughness: 0.58 });
+                const legMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.35, roughness: 0.5 });
+
+                const top = new THREE.Mesh(new THREE.BoxGeometry(2.45, 0.08, 1.05), oakMat);
+                top.position.set(0, 0.78, 0);
+                top.castShadow = true;
+                top.receiveShadow = true;
+                deskGroup.add(top);
+
+                // Передняя панель стола
+                const modesty = new THREE.Mesh(new THREE.BoxGeometry(2.25, 0.52, 0.05), oakMat);
+                modesty.position.set(0, 0.48, -0.45);
+                deskGroup.add(modesty);
+
+                // Ножки
+                [[-1.12, -0.42], [1.12, -0.42], [-1.12, 0.42], [1.12, 0.42]].forEach(([lx, lz]) => {
+                    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.74, 0.07), legMat);
+                    leg.position.set(lx, 0.37, lz);
+                    leg.castShadow = true;
+                    deskGroup.add(leg);
+                });
+
+                // Обычный офисный монитор (левая часть стола)
+                const monStand = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.02, 0.18), legMat);
+                monStand.position.set(-0.62, 0.83, -0.2);
+                deskGroup.add(monStand);
+                const monNeck = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.24, 0.05), legMat);
+                monNeck.position.set(-0.62, 0.94, -0.24);
+                deskGroup.add(monNeck);
+                const monFrame = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.44, 0.04), legMat);
+                monFrame.position.set(-0.62, 1.14, -0.22);
+                monFrame.rotation.y = 0.24;
+                deskGroup.add(monFrame);
+
+                this.monitorCanvas = document.createElement('canvas');
+                this.monitorCanvas.width = 512;
+                this.monitorCanvas.height = 300;
+                this.monitorTex = new THREE.CanvasTexture(this.monitorCanvas);
+                const monScreen = new THREE.Mesh(
+                    new THREE.PlaneGeometry(0.68, 0.38),
+                    new THREE.MeshBasicMaterial({ map: this.monitorTex })
+                );
+                monScreen.position.set(-0.615, 1.14, -0.197);
+                monScreen.rotation.y = 0.24;
+                deskGroup.add(monScreen);
+
+                // Клавиатура и мышка (обычные офисные)
+                const kb = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.44, 0.02, 0.15),
+                    new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.5 })
+                );
+                kb.position.set(-0.46, 0.83, 0.12);
+                kb.rotation.y = 0.12;
+                deskGroup.add(kb);
+
+                const mouse = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.065, 0.024, 0.1),
+                    new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.4 })
+                );
+                mouse.position.set(-0.14, 0.83, 0.14);
+                deskGroup.add(mouse);
+
+                // Стопка анкет и папка
+                const folderColors = [0x38bdf8, 0xf8fafc, 0xfef08a];
+                folderColors.forEach((col, i) => {
+                    const f = new THREE.Mesh(
+                        new THREE.BoxGeometry(0.24, 0.018, 0.32),
+                        new THREE.MeshStandardMaterial({ color: col, roughness: 0.8 })
+                    );
+                    f.position.set(-0.98, 0.83 + i * 0.019, 0.14);
+                    f.rotation.y = (i - 1) * 0.09;
+                    deskGroup.add(f);
+                });
+
+                // Кружка кофе с паром (интерактивная!)
+                const mugMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+                const mug = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.044, 0.11, 14), mugMat);
+                mug.position.set(0.18, 0.875, 0.26);
+                deskGroup.add(mug);
+                const coffeeTop = new THREE.Mesh(
+                    new THREE.CircleGeometry(0.042, 12),
+                    new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.2 })
+                );
+                coffeeTop.rotation.x = -Math.PI / 2;
+                coffeeTop.position.set(0.18, 0.931, 0.26);
+                deskGroup.add(coffeeTop);
+                this.coffeeMugWorldPos = new THREE.Vector3(0.18, 0.96, 0.85 + 0.26);
+
+                // Красный стационарный офисный телефон (звонит директор!)
+                this.deskPhoneGroup = new THREE.Group();
+                this.deskPhoneGroup.position.set(0.95, 0.82, 0.18);
+                this.deskPhoneGroup.rotation.y = -0.35;
+                const redPhoneMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.35 });
+                const pBase = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.07, 0.22), redPhoneMat);
+                pBase.position.y = 0.035;
+                this.deskPhoneGroup.add(pBase);
+                this.deskHandset = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.055, 0.06), redPhoneMat);
+                this.deskHandset.position.set(0, 0.095, -0.02);
+                this.deskPhoneGroup.add(this.deskHandset);
+                deskGroup.add(this.deskPhoneGroup);
+                this.deskPhoneWorldPos = new THREE.Vector3(0.95, 0.92, 0.85 + 0.18);
+
+                // Настольная табличка «HR PLAVWLY»
+                const plaque = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.36, 0.09, 0.04),
+                    new THREE.MeshStandardMaterial({
+                        map: this.createTextSignTexture('HR • PLAVWLY', '#1e293b', '#f8fafc', 256, 64, 28)
+                    })
+                );
+                plaque.position.set(0.0, 0.865, -0.38);
+                deskGroup.add(plaque);
+
+                // --- ИНТЕРАКТИВНЫЙ 3D-ТЕРМИНАЛ HR НА СТОЛЕ (ДЛЯ VR И FPS) ---
+                this.buildDeskTerminal(deskGroup);
+
+                this.scene.add(deskGroup);
+                this.addCollider(-1.32, 1.32, 0.26, 1.46);
+            }
+
+            buildDeskTerminal(deskGroup) {
+                const termGroup = new THREE.Group();
+                termGroup.position.set(0.55, 0.82, -0.06);
+                termGroup.rotation.y = -0.32;
+
+                const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.45 });
+                const base = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.04, 0.28), bodyMat);
+                base.position.y = 0.02;
+                termGroup.add(base);
+
+                // Наклонная панель с 3D-кнопками
+                const boardPivot = new THREE.Group();
+                boardPivot.position.set(0, 0.2, 0);
+                boardPivot.rotation.x = -0.45;
+                termGroup.add(boardPivot);
+
+                const panel = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.34, 0.03), bodyMat);
+                boardPivot.add(panel);
+
+                const btnSpecs = [
+                    { id: 'ask', label: '1. ВОПРОС / ДОКАЖИ', y: 0.09, color: '#0284c7' },
+                    { id: 'hire', label: '✓ ПРИНЯТЬ НА РАБОТУ', y: 0.0, color: '#16a34a' },
+                    { id: 'refill', label: '💧 ЗАПРАВИТЬ ВОДУ', y: -0.09, color: '#0891b2' }
+                ];
+
+                this.terminalButtons = [];
+                btnSpecs.forEach(spec => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 512;
+                    canvas.height = 96;
+                    const tex = new THREE.CanvasTexture(canvas);
+                    const mat = new THREE.MeshBasicMaterial({ map: tex });
+                    const sideMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.4 });
+                    const mesh = new THREE.Mesh(
+                        new THREE.BoxGeometry(0.5, 0.072, 0.022),
+                        [sideMat, sideMat, sideMat, sideMat, mat, sideMat]
+                    );
+                    mesh.position.set(0, spec.y, 0.022);
+                    mesh.userData = {
+                        terminalAction: spec.id,
+                        canvas,
+                        tex,
+                        baseColor: spec.color,
+                        label: spec.label
+                    };
+                    boardPivot.add(mesh);
+                    this.terminalButtons.push(mesh);
+                });
+
+                deskGroup.add(termGroup);
+            }
+
+            updateTerminalVisuals() {
+                // Обновляем текстуру на 3D-кнопках терминала
+                this.terminalButtons.forEach(btn => {
+                    const { terminalAction, canvas, tex, baseColor } = btn.userData;
+                    const ctx = canvas.getContext('2d');
+                    let label = btn.userData.label;
+                    let active = true;
+
+                    if (terminalAction === 'ask') {
+                        if (this.turnPhase === 'WAITING_ASK') label = '1. ЗАРЕГИСТРИРОВАН В PLAVWLY?';
+                        else if (this.turnPhase === 'ANSWERED' && this.currentCandidate && this.currentCandidate.claimYes) label = '1. ДОКАЖИ! ПОКАЖИ ТЕЛЕФОН';
+                        else if (this.turnPhase === 'SHOWING_PHONE') label = 'ОСМОТРИ ТЕЛЕФОН КАНДИДАТА';
+                        else { label = 'ОЖИДАНИЕ КАНДИДАТА...'; active = false; }
+                    } else if (terminalAction === 'hire') {
+                        active = this.turnPhase === 'SHOWING_PHONE';
+                        label = active ? '✓ ПРИНЯТЫ НА РАБОТУ!' : 'ПРИНЯТЬ (ПОСЛЕ ПРОВЕРКИ)';
+                    } else if (terminalAction === 'refill') {
+                        label = `💧 ВОДА: ${this.waterAmmo}/${this.maxWaterAmmo} (ЗАПРАВИТЬ)`;
+                    }
+
+                    const isHovered = this.hoveredTerminalBtn === btn;
+                    ctx.fillStyle = active ? (isHovered ? '#38bdf8' : baseColor) : '#475569';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.strokeStyle = isHovered ? '#ffffff' : 'rgba(255,255,255,0.45)';
+                    ctx.lineWidth = isHovered ? 10 : 4;
+                    ctx.strokeRect(4, 4, canvas.width - 8, canvas.height - 8);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '800 26px Segoe UI, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(label, canvas.width / 2, canvas.height / 2);
+                    tex.needsUpdate = true;
+                });
+
+                // Обновляем экран офисного монитора
+                if (this.monitorCanvas && this.monitorTex) {
+                    const ctx = this.monitorCanvas.getContext('2d');
+                    ctx.fillStyle = '#f8fafc';
+                    ctx.fillRect(0, 0, 512, 300);
+                    ctx.fillStyle = '#0284c7';
+                    ctx.fillRect(0, 0, 512, 54);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '800 24px Segoe UI, sans-serif';
+                    ctx.fillText('PLAVWLY HR-ПОРТАЛ', 20, 35);
+
+                    ctx.fillStyle = '#0f172a';
+                    ctx.font = '700 22px Segoe UI, sans-serif';
+                    ctx.fillText(`Принято разработчиков: ${this.hiredCount}`, 22, 96);
+                    ctx.fillText(`Облито хитрецов: ${this.soakedCount}`, 22, 130);
+                    ctx.fillText(`Текущая серия: ${this.streak}`, 22, 164);
+
+                    ctx.fillStyle = '#e0f2fe';
+                    ctx.fillRect(20, 192, 472, 84);
+                    ctx.fillStyle = '#0369a1';
+                    ctx.font = '800 18px Segoe UI, sans-serif';
+                    const cName = this.currentCandidate ? this.currentCandidate.name : 'Ожидание...';
+                    ctx.fillText(`На собеседовании: ${cName}`, 34, 224);
+                    ctx.fillStyle = '#334155';
+                    ctx.font = '600 16px Segoe UI, sans-serif';
+                    ctx.fillText(`Статус: ${this.turnPhase} | Вода: ${this.waterAmmo}/${this.maxWaterAmmo}`, 34, 256);
+                    this.monitorTex.needsUpdate = true;
+                }
+            }
+
+            buildOfficeChair(x, z) {
+                const chair = new THREE.Group();
+                chair.position.set(x, 0, z);
+                const darkMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.65 });
+                const fabricMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.85 });
+
+                const base = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.06, 10), darkMat);
+                base.position.y = 0.05;
+                chair.add(base);
+                const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.42, 8), darkMat);
+                stem.position.y = 0.26;
+                chair.add(stem);
+                const seat = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.08, 0.5), fabricMat);
+                seat.position.y = 0.49;
+                chair.add(seat);
+                const back = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.62, 0.08), fabricMat);
+                back.position.set(0, 0.82, 0.22);
+                chair.add(back);
+                this.scene.add(chair);
+            }
+
+            buildWaterCooler(x, z) {
+                const g = new THREE.Group();
+                g.position.set(x, 0, z);
+                g.rotation.y = -Math.PI / 2;
+
+                const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4 });
+                const body = new THREE.Mesh(new THREE.BoxGeometry(0.46, 1.02, 0.44), whiteMat);
+                body.position.y = 0.51;
+                body.castShadow = true;
+                g.add(body);
+
+                const recess = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.3, 0.22, 0.08),
+                    new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.5 })
+                );
+                recess.position.set(0, 0.72, 0.2);
+                g.add(recess);
+
+                const bottle = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.16, 0.16, 0.54, 14),
+                    new THREE.MeshPhysicalMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.62, roughness: 0.15 })
+                );
+                bottle.position.y = 1.3;
+                g.add(bottle);
+
+                this.scene.add(g);
+                this.coolerWorldPos = new THREE.Vector3(x, 1.0, z);
+                this.addCollider(x - 0.38, x + 0.38, z - 0.38, z + 0.38);
+            }
+
+            buildWhiteboardAndClock() {
+                // Белая маркерная доска
+                const boardCanvas = document.createElement('canvas');
+                boardCanvas.width = 512;
+                boardCanvas.height = 300;
+                const ctx = boardCanvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, 512, 300);
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 10;
+                ctx.strokeRect(5, 5, 502, 290);
+                ctx.fillStyle = '#0284c7';
+                ctx.font = '800 30px Segoe UI, sans-serif';
+                ctx.fillText('ПЛАН HR PLAVWLY:', 30, 58);
+                ctx.fillStyle = '#1e293b';
+                ctx.font = '700 22px Segoe UI, sans-serif';
+                ctx.fillText('1. Спросить про Plavwly', 34, 108);
+                ctx.fillText('2. Проверить телефон!', 34, 146);
+                ctx.fillText('3. Принять или облить!', 34, 184);
+
+                // Жёлтый стикер
+                ctx.fillStyle = '#fef08a';
+                ctx.fillRect(350, 175, 118, 92);
+                ctx.fillStyle = '#854d0e';
+                ctx.font = '700 17px Segoe UI, sans-serif';
+                ctx.fillText('Кофе =', 372, 212);
+                ctx.fillText('Турбо!', 372, 238);
+
+                const wb = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.05, 1.25, 2.1),
+                    new THREE.MeshStandardMaterial({ map: new THREE.CanvasTexture(boardCanvas), roughness: 0.35 })
+                );
+                wb.position.set(-4.48, 1.85, 0.05);
+                this.scene.add(wb);
+
+                // Настенные тикающие часы
+                this.clockCanvas = document.createElement('canvas');
+                this.clockCanvas.width = 256;
+                this.clockCanvas.height = 256;
+                this.clockTex = new THREE.CanvasTexture(this.clockCanvas);
+                const clockMesh = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.28, 0.28, 0.05, 24),
+                    [
+                        new THREE.MeshStandardMaterial({ color: 0x334155 }),
+                        new THREE.MeshBasicMaterial({ map: this.clockTex }),
+                        new THREE.MeshStandardMaterial({ color: 0x334155 })
+                    ]
+                );
+                clockMesh.rotation.z = -Math.PI / 2;
+                clockMesh.rotation.y = Math.PI;
+                clockMesh.position.set(-4.47, 2.75, -1.7);
+                this.scene.add(clockMesh);
+                this.updateWallClock(0);
+            }
+
+            updateWallClock(elapsed) {
+                if (!this.clockCanvas || !this.clockTex) return;
+                const ctx = this.clockCanvas.getContext('2d');
+                ctx.clearRect(0, 0, 256, 256);
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(128, 128, 120, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#1e293b';
+                ctx.lineWidth = 10;
+                ctx.stroke();
+
+                for (let i = 0; i < 12; i++) {
+                    const a = (i / 12) * Math.PI * 2;
+                    ctx.beginPath();
+                    ctx.moveTo(128 + Math.cos(a) * 92, 128 + Math.sin(a) * 92);
+                    ctx.lineTo(128 + Math.cos(a) * 108, 128 + Math.sin(a) * 108);
+                    ctx.lineWidth = i % 3 === 0 ? 5 : 2;
+                    ctx.stroke();
+                }
+
+                const now = new Date();
+                const sec = now.getSeconds() + (elapsed % 1);
+                const min = now.getMinutes() + sec / 60;
+                const hr = (now.getHours() % 12) + min / 60;
+
+                const drawHand = (angle, len, w, col) => {
+                    ctx.strokeStyle = col;
+                    ctx.lineWidth = w;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(128, 128);
+                    ctx.lineTo(128 + Math.cos(angle - Math.PI / 2) * len, 128 + Math.sin(angle - Math.PI / 2) * len);
+                    ctx.stroke();
+                };
+                drawHand((hr / 12) * Math.PI * 2, 56, 7, '#0f172a');
+                drawHand((min / 60) * Math.PI * 2, 82, 5, '#334155');
+                drawHand((Math.floor(sec) / 60) * Math.PI * 2, 92, 2.5, '#ef4444');
+                this.clockTex.needsUpdate = true;
+            }
+
+            buildBookshelf(x, z) {
+                const shelf = new THREE.Group();
+                shelf.position.set(x, 0, z);
+                const wood = new THREE.MeshStandardMaterial({ color: 0xb08968, roughness: 0.7 });
+                const body = new THREE.Mesh(new THREE.BoxGeometry(1.1, 2.1, 0.44), wood);
+                body.position.y = 1.05;
+                body.castShadow = true;
+                shelf.add(body);
+
+                const binderColors = [0x0284c7, 0x16a34a, 0xeab308, 0xef4444, 0x6366f1];
+                for (let row = 0; row < 3; row++) {
+                    for (let i = 0; i < 6; i++) {
+                        const b = new THREE.Mesh(
+                            new THREE.BoxGeometry(0.11, 0.32, 0.26),
+                            new THREE.MeshStandardMaterial({ color: binderColors[(i + row) % binderColors.length], roughness: 0.65 })
+                        );
+                        b.position.set(-0.36 + i * 0.145, 0.45 + row * 0.58, 0.14);
+                        shelf.add(b);
+                    }
+                }
+                this.scene.add(shelf);
+                this.addCollider(x - 0.65, x + 0.65, z - 0.35, z + 0.35);
+            }
+
+            buildLoungeArea() {
+                const sofa = new THREE.Group();
+                sofa.position.set(-2.95, 0, 3.15);
+                sofa.rotation.y = Math.PI;
+                const fabric = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.9 });
+                const seat = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.42, 0.85), fabric);
+                seat.position.y = 0.24;
+                seat.castShadow = true;
+                sofa.add(seat);
+                const back = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.56, 0.2), fabric);
+                back.position.set(0, 0.62, -0.34);
+                sofa.add(back);
+                [-0.86, 0.86].forEach(ax => {
+                    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.48, 0.85), fabric);
+                    arm.position.set(ax, 0.38, 0);
+                    sofa.add(arm);
+                });
+                this.scene.add(sofa);
+                this.addCollider(-4.0, -1.9, 2.6, 3.7);
+
+                // Журнальный столик
+                const table = new THREE.Mesh(
+                    new THREE.BoxGeometry(1.0, 0.38, 0.55),
+                    new THREE.MeshStandardMaterial({ color: 0xd6b48c, roughness: 0.6 })
+                );
+                table.position.set(-2.95, 0.19, 2.0);
+                table.castShadow = true;
+                this.scene.add(table);
+                this.addCollider(-3.55, -2.35, 1.62, 2.38);
+            }
+
+            buildPlant(x, z) {
+                const p = new THREE.Group();
+                p.position.set(x, 0, z);
+                const pot = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.24, 0.17, 0.42, 12),
+                    new THREE.MeshStandardMaterial({ color: 0xc26d4a, roughness: 0.85 })
+                );
+                pot.position.y = 0.21;
+                p.add(pot);
+                const stem = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.035, 0.045, 0.72, 7),
+                    new THREE.MeshStandardMaterial({ color: 0x654321 })
+                );
+                stem.position.y = 0.65;
+                p.add(stem);
+                const leafMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.75 });
+                [[0, 1.15, 0, 0.34], [0.2, 0.96, 0.14, 0.22], [-0.18, 0.94, -0.12, 0.24], [0.06, 0.92, -0.2, 0.2]].forEach(([lx, ly, lz, r]) => {
+                    const l = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 10), leafMat);
+                    l.position.set(lx, ly, lz);
+                    p.add(l);
+                });
+                this.scene.add(p);
+                this.addCollider(x - 0.3, x + 0.3, z - 0.3, z + 0.3);
+            }
+
+            /* ----------------- ВОДЯНОЙ ПИСТОЛЕТ ----------------- */
+            buildWaterPistol() {
+                this.pistolGroup = new THREE.Group();
+                this.pistolBodyMat = new THREE.MeshStandardMaterial({ color: PISTOL_SKINS.classic.body, roughness: 0.32 });
+                this.pistolAccentMat = new THREE.MeshStandardMaterial({ color: PISTOL_SKINS.classic.accent, roughness: 0.38 });
+                this.pistolNozzleMat = new THREE.MeshStandardMaterial({ color: PISTOL_SKINS.classic.nozzle, roughness: 0.35 });
+
+                const barrel = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.095, 0.34), this.pistolBodyMat);
+                barrel.position.set(0, 0, -0.14);
+                this.pistolGroup.add(barrel);
+
+                const grip = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.14, 0.08), this.pistolAccentMat);
+                grip.position.set(0, -0.09, -0.02);
+                grip.rotation.x = 0.28;
+                this.pistolGroup.add(grip);
+
+                const trigger = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.04, 0.03), this.pistolNozzleMat);
+                trigger.position.set(0, -0.055, -0.08);
+                this.pistolGroup.add(trigger);
+
+                const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.024, 0.07, 10), this.pistolNozzleMat);
+                nozzle.rotation.x = Math.PI / 2;
+                nozzle.position.set(0, 0.01, -0.34);
+                this.pistolGroup.add(nozzle);
+
+                // Прозрачный бак с уровнем воды
+                const tankGlass = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.046, 0.046, 0.18, 12),
+                    new THREE.MeshPhysicalMaterial({ color: 0xe0f2fe, transparent: true, opacity: 0.38, roughness: 0.1 })
+                );
+                tankGlass.rotation.x = Math.PI / 2;
+                tankGlass.position.set(0, 0.088, -0.14);
+                this.pistolGroup.add(tankGlass);
+
+                this.pistolWaterMesh = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.039, 0.039, 0.16, 12),
+                    new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.85, roughness: 0.15 })
+                );
+                this.pistolWaterMesh.rotation.x = Math.PI / 2;
+                this.pistolWaterMesh.position.set(0, 0.088, -0.14);
+                this.pistolGroup.add(this.pistolWaterMesh);
+
+                this.pistolTip = new THREE.Object3D();
+                this.pistolTip.position.set(0, 0.01, -0.38);
+                this.pistolGroup.add(this.pistolTip);
+
+                this.pistolBasePos = new THREE.Vector3(0.28, -0.23, -0.44);
+                this.pistolGroup.position.copy(this.pistolBasePos);
+                this.camera.add(this.pistolGroup);
+            }
+
+            updatePistolWaterTank() {
+                if (!this.pistolWaterMesh) return;
+                const ratio = Math.max(0.001, this.waterAmmo / this.maxWaterAmmo);
+                this.pistolWaterMesh.scale.y = ratio;
+                this.pistolWaterMesh.visible = this.waterAmmo > 0;
+            }
+
+            /* ----------------- ГЕНЕРАТОР КАНДИДАТА-ШАРИКА ----------------- */
+            createPhoneTexture(phoneData, colorHex) {
+                const c = document.createElement('canvas');
+                c.width = 256;
+                c.height = 420;
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = '#f8fafc';
+                ctx.fillRect(0, 0, 256, 420);
+                ctx.fillStyle = '#0284c7';
+                ctx.fillRect(0, 0, 256, 68);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 24px Segoe UI, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(phoneData ? phoneData.app : 'НЕТ СЕТИ', 128, 44);
+
+                ctx.fillStyle = '#' + colorHex.toString(16).padStart(6, '0');
+                ctx.beginPath();
+                ctx.arc(128, 134, 38, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (phoneData) {
+                    ctx.fillStyle = '#0f172a';
+                    ctx.font = '800 22px Segoe UI, sans-serif';
+                    ctx.fillText(phoneData.user, 128, 206);
+                    ctx.fillStyle = '#475569';
+                    ctx.font = '600 18px Segoe UI, sans-serif';
+                    ctx.fillText(phoneData.role, 128, 236);
+
+                    ctx.fillStyle = phoneData.badge.includes('✓') && !phoneData.badge.includes('?') ? '#dcfce7' : '#fee2e2';
+                    ctx.fillRect(24, 260, 208, 44);
+                    ctx.fillStyle = '#0f172a';
+                    ctx.font = '800 17px Segoe UI, sans-serif';
+                    ctx.fillText(phoneData.badge, 128, 288);
+
+                    ctx.fillStyle = '#334155';
+                    ctx.font = '700 16px Segoe UI, sans-serif';
+                    ctx.fillText(phoneData.date, 128, 344);
+                    ctx.fillText(phoneData.note, 128, 374);
+                }
+                return new THREE.CanvasTexture(c);
+            }
+
+            spawnNextCandidate() {
+                if (this.candidateMesh) {
+                    this.scene.remove(this.candidateMesh);
+                    this.candidateMesh = null;
+                }
+                if (this.deck.length === 0) {
+                    this.deck = CANDIDATES.map((_, i) => i).sort(() => Math.random() - 0.5);
+                }
+                const idx = this.deck.pop();
+                this.currentCandidate = CANDIDATES[idx];
+                this.candidateNumber++;
+
+                const root = new THREE.Group();
+                // Тело-шарик
+                const bodyMat = new THREE.MeshStandardMaterial({
+                    color: this.currentCandidate.color,
+                    roughness: 0.35,
+                    metalness: 0.05
+                });
+                const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.44, 24, 24), bodyMat);
+                sphere.position.y = 1.08;
+                sphere.castShadow = true;
+                sphere.userData.isCandidate = true;
+                root.add(sphere);
+
+                // Ножки
+                const shoeMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6 });
+                [-0.16, 0.16].forEach(lx => {
+                    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.62, 10), shoeMat);
+                    leg.position.set(lx, 0.34, 0);
+                    leg.userData.isCandidate = true;
+                    root.add(leg);
+                    const foot = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.09, 0.22), shoeMat);
+                    foot.position.set(lx, 0.05, 0.05);
+                    root.add(foot);
+                });
+
+                // Глаза с морганием
+                this.candidateEyes = [];
+                const whiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const pupilMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
+                [-0.14, 0.14].forEach(ex => {
+                    const eyeGroup = new THREE.Group();
+                    eyeGroup.position.set(ex, 1.18, 0.39);
+                    const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.072, 12, 12), whiteMat);
+                    const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.036, 10, 10), pupilMat);
+                    pupil.position.z = 0.055;
+                    eyeGroup.add(sclera, pupil);
+                    root.add(eyeGroup);
+                    this.candidateEyes.push(eyeGroup);
+                });
+
+                // Улыбка
+                const smile = new THREE.Mesh(
+                    new THREE.TorusGeometry(0.08, 0.015, 8, 14, Math.PI),
+                    new THREE.MeshBasicMaterial({ color: 0x0f172a })
+                );
+                smile.rotation.z = Math.PI;
+                smile.position.set(0, 1.03, 0.42);
+                root.add(smile);
+
+                // Аксессуары
+                const acc = this.currentCandidate.accessory;
+                const darkFrame = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.3 });
+                if (acc === 'glasses' || acc === 'sunglasses') {
+                    const lensMat = acc === 'sunglasses'
+                        ? new THREE.MeshStandardMaterial({ color: 0x020617, roughness: 0.15, metalness: 0.6 })
+                        : new THREE.MeshPhysicalMaterial({ color: 0xe0f2fe, transparent: true, opacity: 0.35 });
+                    [-0.14, 0.14].forEach(gx => {
+                        const rim = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.014, 8, 16), darkFrame);
+                        rim.position.set(gx, 1.18, 0.45);
+                        root.add(rim);
+                        const lens = new THREE.Mesh(new THREE.CircleGeometry(0.082, 14), lensMat);
+                        lens.position.set(gx, 1.18, 0.452);
+                        root.add(lens);
+                    });
+                    const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 0.02), darkFrame);
+                    bridge.position.set(0, 1.18, 0.45);
+                    root.add(bridge);
+                } else if (acc === 'cap') {
+                    const capMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.6 });
+                    const dome = new THREE.Mesh(new THREE.SphereGeometry(0.41, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.45), capMat);
+                    dome.position.y = 1.16;
+                    root.add(dome);
+                    const brim = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.03, 0.28), capMat);
+                    brim.position.set(0, 1.44, 0.34);
+                    root.add(brim);
+                } else if (acc === 'beanie') {
+                    const bMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.9 });
+                    const hat = new THREE.Mesh(new THREE.SphereGeometry(0.42, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.48), bMat);
+                    hat.position.y = 1.16;
+                    root.add(hat);
+                    const pom = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 10), bMat);
+                    pom.position.y = 1.62;
+                    root.add(pom);
+                } else if (acc === 'headphones') {
+                    const hpMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.35 });
+                    const band = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.032, 8, 20, Math.PI), hpMat);
+                    band.position.y = 1.12;
+                    root.add(band);
+                    [-0.45, 0.45].forEach(hx => {
+                        const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.08, 12), hpMat);
+                        cup.rotation.z = Math.PI / 2;
+                        cup.position.set(hx, 1.12, 0);
+                        root.add(cup);
+                    });
+                } else if (acc === 'visor') {
+                    const visor = new THREE.Mesh(
+                        new THREE.BoxGeometry(0.56, 0.18, 0.22),
+                        new THREE.MeshStandardMaterial({ color: 0x38bdf8, metalness: 0.5, roughness: 0.2 })
+                    );
+                    visor.position.set(0, 1.18, 0.38);
+                    root.add(visor);
+                } else if (acc === 'monocle') {
+                    const gold = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.7, roughness: 0.2 });
+                    const mon = new THREE.Mesh(new THREE.TorusGeometry(0.095, 0.015, 8, 16), gold);
+                    mon.position.set(0.14, 1.18, 0.45);
+                    root.add(mon);
+                } else if (acc === 'tie') {
+                    const tie = new THREE.Mesh(
+                        new THREE.ConeGeometry(0.08, 0.28, 4),
+                        new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.6 })
+                    );
+                    tie.rotation.x = Math.PI;
+                    tie.position.set(0, 0.72, 0.34);
+                    root.add(tie);
+                }
+
+                // 3D-смартфон кандидата (появляется, когда просишь доказать)
+                const phoneGroup = new THREE.Group();
+                const phoneBody = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.28, 0.46, 0.03),
+                    new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.3 })
+                );
+                phoneGroup.add(phoneBody);
+                const screenMat = new THREE.MeshBasicMaterial({
+                    map: this.createPhoneTexture(this.currentCandidate.phone, this.currentCandidate.color)
+                });
+                const phoneScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.25, 0.42), screenMat);
+                phoneScreen.position.z = 0.018;
+                phoneGroup.add(phoneScreen);
+                phoneGroup.position.set(0.38, 1.12, 0.56);
+                phoneGroup.visible = false;
+                root.add(phoneGroup);
+                this.candidatePhoneMesh = phoneGroup;
+
+                // Стартует в коридоре за дверью
+                root.position.set(5.8, 0, -1.75);
+                root.rotation.y = -Math.PI / 2;
+                this.scene.add(root);
+                this.candidateMesh = root;
+
+                this.turnPhase = 'WALK_IN';
+                this.doorTargetAngle = Math.PI * 0.48;
+                audio.playDoorSound();
+
+                document.getElementById('phone-inspect-card').classList.add('hidden');
+                this.setDialogue('ОФИС PLAVWLY', `В кабинет заходит кандидат: ${this.currentCandidate.name}...`);
+                this.updateActionButtons();
+                this.updateTerminalVisuals();
+            }
+
+            /* ----------------- ЛОГИКА СОБЕСЕДОВАНИЯ ----------------- */
+            setDialogue(speaker, text) {
+                document.getElementById('speakerName').textContent = speaker;
+                document.getElementById('candidateCounter').textContent = `Кандидат #${Math.max(1, this.candidateNumber)}`;
+                document.getElementById('dialogueText').textContent = text;
+            }
+
+            updateActionButtons() {
+                const btnAsk = document.getElementById('btnAskPlavwly');
+                const btnSkill = document.getElementById('btnAskSkill');
+                const btnProof = document.getElementById('btnAskProof');
+                const btnHire = document.getElementById('btnHireCandidate');
+                const btnRefill = document.getElementById('btnRefillWater');
+                const btnPhone = document.getElementById('btnAnswerDeskPhone');
+
+                btnAsk.classList.toggle('hidden', this.turnPhase !== 'WAITING_ASK');
+                btnSkill.classList.toggle('hidden', !(this.turnPhase === 'WAITING_ASK' || this.turnPhase === 'ANSWERED'));
+                btnProof.classList.toggle('hidden', !(this.turnPhase === 'ANSWERED' && this.currentCandidate && this.currentCandidate.claimYes));
+                btnHire.classList.toggle('hidden', this.turnPhase !== 'SHOWING_PHONE');
+                btnRefill.classList.toggle('hidden', this.waterAmmo >= this.maxWaterAmmo);
+                btnPhone.classList.toggle('hidden', !this.deskPhoneRinging);
+            }
+
+            askRegisteredQuestion() {
+                if (this.turnPhase !== 'WAITING_ASK' || !this.currentCandidate) return;
+                audio.playUiClick();
+                this.turnPhase = 'ANSWERED';
+                this.setDialogue(this.currentCandidate.name, `«${this.currentCandidate.answer}»`);
+                this.updateActionButtons();
+                this.updateTerminalVisuals();
+            }
+
+            askSkillQuestion() {
+                if (!this.currentCandidate || (this.turnPhase !== 'WAITING_ASK' && this.turnPhase !== 'ANSWERED')) return;
+                audio.playUiClick();
+                this.setDialogue(this.currentCandidate.name, `«${this.currentCandidate.skill}»`);
+            }
+
+            askToShowPhone() {
+                if (this.turnPhase !== 'ANSWERED' || !this.currentCandidate || !this.currentCandidate.claimYes) return;
+                audio.playUiClick();
+                this.turnPhase = 'SHOWING_PHONE';
+                if (this.candidatePhoneMesh) this.candidatePhoneMesh.visible = true;
+
+                // Показываем HUD-инспектор телефона
+                const p = this.currentCandidate.phone;
+                if (p) {
+                    document.getElementById('phoneAppTitle').textContent = p.app;
+                    document.getElementById('phoneUserName').textContent = p.user;
+                    document.getElementById('phoneRoleLine').textContent = p.role;
+                    document.getElementById('phoneVerifyBadge').textContent = p.badge;
+                    document.getElementById('phoneDate').textContent = p.date;
+                    document.getElementById('phoneNote').textContent = p.note;
+                    document.getElementById('phoneAvatarDot').style.background = '#' + this.currentCandidate.color.toString(16).padStart(6, '0');
+                    document.getElementById('phone-inspect-card').classList.remove('hidden');
+                }
+
+                this.setDialogue(this.currentCandidate.name, '«Вот мой телефон! Проверяйте — настоящий аккаунт Plavwly!»');
+                this.updateActionButtons();
+                this.updateTerminalVisuals();
+            }
+
+            hireCandidate() {
+                if (this.turnPhase !== 'SHOWING_PHONE' || !this.currentCandidate) return;
+                document.getElementById('phone-inspect-card').classList.add('hidden');
+                if (this.candidatePhoneMesh) this.candidatePhoneMesh.visible = false;
+
+                if (this.currentCandidate.valid) {
+                    this.hiredCount++;
+                    this.streak++;
+                    this.saveProgress();
+                    this.updateHudStats();
+                    this.updateMenuStatsUI();
+                    audio.playHireDance();
+                    this.spawnConfetti(this.candidateMesh.position);
+                    this.turnPhase = 'DANCING';
+                    this.phaseTimer = 3.2;
+                    this.setDialogue(this.currentCandidate.name, '«УРААА! Я принят разработчиком в Plavwly! Время танцевать!»');
+                    this.showToast(`🎉 Принят в Plavwly! ${this.currentCandidate.name} танцует!`, 'good');
+                } else {
+                    this.streak = 0;
+                    this.saveProgress();
+                    this.updateHudStats();
+                    audio.playMistake();
+                    this.turnPhase = 'FLEEING';
+                    this.doorTargetAngle = Math.PI * 0.48;
+                    const reason = this.currentCandidate.fakeReason || 'Это была подделка!';
+                    this.setDialogue('ОШИБКА HR!', `Вы приняли обманщика! ${reason}`);
+                    this.showToast(`⚠️ Ошибка! ${reason}`, 'bad');
+                }
+                this.updateActionButtons();
+                this.updateTerminalVisuals();
+            }
+
+            /* ----------------- ВОДЯНОЙ ПИСТОЛЕТ И СТРЕЛЬБА ----------------- */
+            shootWaterPistol(vrController = null, fromHudButton = false) {
+                if (this.appState !== 'PLAYING') return;
+
+                if (this.waterAmmo <= 0) {
+                    audio.playEmptyClick();
+                    this.showToast('💧 Вода закончилась! Подойдите к кулеру [E] или нажмите [R]', 'info');
+                    this.updateActionButtons();
+                    return;
+                }
+
+                this.waterAmmo--;
+                this.pistolRecoil = 1.0;
+                this.updatePistolWaterTank();
+                this.updateHudStats();
+                this.updateActionButtons();
+                this.updateTerminalVisuals();
+                audio.playWaterSquirt();
+
+                const startPos = new THREE.Vector3();
+                this.pistolTip.getWorldPosition(startPos);
+
+                const aimDir = new THREE.Vector3();
+                const raycaster = new THREE.Raycaster();
+
+                if (vrController) {
+                    const rotMat = new THREE.Matrix4().extractRotation(vrController.matrixWorld);
+                    aimDir.set(0, 0, -1).applyMatrix4(rotMat).normalize();
+                    const origin = new THREE.Vector3().setFromMatrixPosition(vrController.matrixWorld);
+                    raycaster.set(origin, aimDir);
+                } else if (fromHudButton && this.candidateMesh && this.turnPhase !== 'DANCING' && this.turnPhase !== 'FLEEING') {
+                    const targetCenter = new THREE.Vector3(this.candidateMesh.position.x, 1.12, this.candidateMesh.position.z);
+                    const camPos = new THREE.Vector3();
+                    this.camera.getWorldPosition(camPos);
+                    aimDir.copy(targetCenter).sub(startPos).normalize();
+                    raycaster.set(camPos, targetCenter.clone().sub(camPos).normalize());
+                } else {
+                    this.camera.getWorldDirection(aimDir);
+                    raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera);
+                }
+
+                // Струя из 10 капель
+                for (let i = 0; i < 10; i++) {
+                    const mat = new THREE.MeshStandardMaterial({
+                        color: i % 2 === 0 ? 0x38bdf8 : 0xbae6fd,
+                        transparent: true,
+                        opacity: 0.85,
+                        roughness: 0.1
+                    });
+                    const drop = new THREE.Mesh(this.sharedDropGeo, mat);
+                    drop.position.copy(startPos);
+                    const vel = aimDir.clone().multiplyScalar(8.5 + Math.random() * 2.5);
+                    vel.x += (Math.random() - 0.5) * 0.45;
+                    vel.y += (Math.random() - 0.5) * 0.35 + 0.35;
+                    vel.z += (Math.random() - 0.5) * 0.45;
+                    drop.userData = { vel, life: 1.1 };
+                    this.scene.add(drop);
+                    this.waterDroplets.push(drop);
+                }
+
+                // Проверка попадания по кандидату
+                if (this.candidateMesh && this.turnPhase !== 'DANCING' && this.turnPhase !== 'FLEEING') {
+                    const hits = raycaster.intersectObject(this.candidateMesh, true);
+                    if (hits.length > 0) {
+                        this.onCandidateHitByWater(hits[0].point);
+                    }
+                }
+            }
+
+            onCandidateHitByWater(hitPoint) {
+                audio.playSplashHit();
+                const hm = document.getElementById('hitmarker');
+                hm.classList.add('show');
+                setTimeout(() => hm.classList.remove('show'), 170);
+
+                // Брызги и лужа под кандидатом
+                for (let i = 0; i < 12; i++) {
+                    const drop = new THREE.Mesh(
+                        this.sharedDropGeo,
+                        new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+                    );
+                    drop.position.copy(hitPoint);
+                    drop.userData = {
+                        vel: new THREE.Vector3((Math.random() - 0.5) * 3.6, 1.2 + Math.random() * 2.2, (Math.random() - 0.5) * 3.6),
+                        life: 0.9
+                    };
+                    this.scene.add(drop);
+                    this.waterDroplets.push(drop);
+                }
+                this.spawnPuddle(this.candidateMesh.position.x, this.candidateMesh.position.z);
+
+                document.getElementById('phone-inspect-card').classList.add('hidden');
+                if (this.candidatePhoneMesh) this.candidatePhoneMesh.visible = false;
+
+                const isGuilty = this.currentCandidate && (!this.currentCandidate.claimYes || !this.currentCandidate.valid);
+                if (this.turnPhase === 'WAITING_ASK') {
+                    this.streak = 0;
+                    audio.playMistake();
+                    this.showToast('⚠️ Вы даже не спросили кандидата про Plavwly!', 'bad');
+                    this.setDialogue(this.currentCandidate.name, '«Эй! За что водой?! Вы же даже ничего не спросили!»');
+                } else if (isGuilty) {
+                    this.soakedCount++;
+                    this.streak++;
+                    this.showToast(`💦 В точку! ${this.currentCandidate.name} промок и убегает!`, 'good');
+                    this.setDialogue(this.currentCandidate.name, '«ААА! МОКРО! Всё-всё, иду регистрироваться в Plavwly!»');
+                } else {
+                    this.streak = 0;
+                    audio.playMistake();
+                    this.showToast('⚠️ Ой! Это был настоящий разработчик с аккаунтом Plavwly!', 'bad');
+                    this.setDialogue(this.currentCandidate.name, '«Эй! Я же честно зарегистрирован в Plavwly! Мои очки!»');
+                }
+
+                this.saveProgress();
+                this.updateHudStats();
+                this.updateMenuStatsUI();
+
+                this.turnPhase = 'FLEEING';
+                this.doorTargetAngle = Math.PI * 0.48;
+                audio.playDoorSound();
+                this.updateActionButtons();
+                this.updateTerminalVisuals();
+            }
+
+            spawnPuddle(x, z) {
+                const puddle = new THREE.Mesh(
+                    this.sharedPuddleGeo,
+                    new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.42, roughness: 0.1 })
+                );
+                puddle.rotation.x = -Math.PI / 2;
+                puddle.position.set(x + (Math.random() - 0.5) * 0.35, 0.006, z + (Math.random() - 0.5) * 0.35);
+                puddle.scale.setScalar(0.8 + Math.random() * 0.7);
+                puddle.userData = { life: 12 };
+                this.scene.add(puddle);
+                this.puddles.push(puddle);
+                if (this.puddles.length > 16) {
+                    const old = this.puddles.shift();
+                    this.scene.remove(old);
+                }
+            }
+
+            spawnConfetti(pos) {
+                const cols = [0x38bdf8, 0x22c55e, 0xfacc15, 0xec4899, 0xa855f7];
+                for (let i = 0; i < 38; i++) {
+                    const mesh = new THREE.Mesh(
+                        this.sharedConfettiGeo,
+                        new THREE.MeshBasicMaterial({ color: cols[i % cols.length] })
+                    );
+                    mesh.position.set(pos.x, 1.5, pos.z);
+                    mesh.userData = {
+                        vel: new THREE.Vector3((Math.random() - 0.5) * 3.8, 2.2 + Math.random() * 2.8, (Math.random() - 0.5) * 3.8),
+                        rot: new THREE.Vector3(Math.random() * 8, Math.random() * 8, Math.random() * 8),
+                        life: 2.6
+                    };
+                    this.scene.add(mesh);
+                    this.confetti.push(mesh);
+                }
+            }
+
+            refillWaterPistol() {
+                if (this.waterAmmo >= this.maxWaterAmmo) {
+                    this.showToast('💧 Бак водяного пистолета уже полный!', 'info');
+                    return;
+                }
+                this.waterAmmo = this.maxWaterAmmo;
+                this.updatePistolWaterTank();
+                this.updateHudStats();
+                this.updateActionButtons();
+                this.updateTerminalVisuals();
+                audio.playRefill();
+                this.showToast('🚰 Водяной пистолет заправлен (8/8)!', 'info');
+            }
+
+            drinkCoffee() {
+                this.coffeeBoostTimer = 10;
+                document.getElementById('coffeeBoostBadge').classList.remove('hidden');
+                audio.playCoffeeSip();
+                this.showToast('☕ Свежий кофе! Скорость передвижения увеличена на 10 сек!', 'good');
+            }
+
+            answerDeskPhone() {
+                if (!this.deskPhoneRinging) return;
+                this.deskPhoneRinging = false;
+                this.deskPhoneTimer = 26 + Math.random() * 18;
+                this.deskHandset.position.y = 0.095;
+                this.deskHandset.rotation.z = 0;
+                this.streak++;
+                this.saveProgress();
+                this.updateHudStats();
+                this.updateActionButtons();
+                audio.playHireDance();
+                const lines = [
+                    'Директор Plavwly: «Отличная работа! Ни одного фейка не пропустили! +1 к серии!»',
+                    'Директор Plavwly: «Офис сияет! Продолжайте отбирать лучших разработчиков! +1 к серии!»',
+                    'Директор Plavwly: «Говорят, наш водяной пистолет работает безупречно! Так держать!»'
+                ];
+                this.showToast('☎️ ' + lines[Math.floor(Math.random() * lines.length)], 'good');
+            }
+
+            /* ----------------- WEBXR & STEREO VR ----------------- */
+            async checkVrSupport() {
+                const note = document.getElementById('vrCapabilityNote');
+                if (navigator.xr && navigator.xr.isSessionSupported) {
+                    try {
+                        this.vrSupported = await navigator.xr.isSessionSupported('immersive-vr');
+                    } catch (_) {
+                        this.vrSupported = false;
+                    }
+                }
+                if (this.vrSupported) {
+                    note.textContent = '🥽 Обнаружен WebXR-шлем! Доступен полноценный 6DoF VR с контроллерами.';
+                } else {
+                    note.textContent = '🥽 WebXR-шлем не подключён — кнопка «Войти в VR» запустит Stereo VR (Cardboard + гироскоп и управление взглядом).';
+                }
+            }
+
+            setupWebXRControllers() {
+                for (let i = 0; i < 2; i++) {
+                    const ctrl = this.renderer.xr.getController(i);
+                    const lineGeo = new THREE.BufferGeometry().setFromPoints([
+                        new THREE.Vector3(0, 0, 0),
+                        new THREE.Vector3(0, 0, -3.5)
+                    ]);
+                    const line = new THREE.Line(
+                        lineGeo,
+                        new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7 })
+                    );
+                    ctrl.add(line);
+                    ctrl.addEventListener('selectstart', () => this.onXrControllerTrigger(ctrl));
+                    this.playerRig.add(ctrl);
+                    this.vrControllers.push(ctrl);
+                }
+
+                this.renderer.xr.addEventListener('sessionstart', () => {
+                    this.camera.position.set(0, 0, 0);
+                    this.pistolGroup.position.set(0, -0.02, -0.08);
+                    this.pistolGroup.rotation.set(0, 0, 0);
+                    this.vrControllers[0].add(this.pistolGroup);
+                    document.getElementById('hud').classList.add('hidden');
+                    document.getElementById('main-menu').classList.add('hidden');
+                });
+
+                this.renderer.xr.addEventListener('sessionend', () => {
+                    this.camera.position.set(0, this.playerHeight, 0);
+                    this.pistolGroup.position.copy(this.pistolBasePos);
+                    this.pistolGroup.rotation.set(0, 0, 0);
+                    this.camera.add(this.pistolGroup);
+                    if (this.appState === 'PLAYING') {
+                        document.getElementById('hud').classList.remove('hidden');
+                    }
+                });
+            }
+
+            onXrControllerTrigger(ctrl) {
+                const rotMat = new THREE.Matrix4().extractRotation(ctrl.matrixWorld);
+                const dir = new THREE.Vector3(0, 0, -1).applyMatrix4(rotMat).normalize();
+                const origin = new THREE.Vector3().setFromMatrixPosition(ctrl.matrixWorld);
+                const ray = new THREE.Raycaster(origin, dir);
+
+                // Проверяем клик по 3D-кнопкам терминала на столе
+                const hits = ray.intersectObjects(this.terminalButtons, false);
+                if (hits.length > 0) {
+                    this.triggerTerminalAction(hits[0].object.userData.terminalAction);
+                    return;
+                }
+                this.shootWaterPistol(ctrl, false);
+            }
+
+            triggerTerminalAction(action) {
+                if (action === 'ask') {
+                    if (this.turnPhase === 'WAITING_ASK') this.askRegisteredQuestion();
+                    else if (this.turnPhase === 'ANSWERED' && this.currentCandidate && this.currentCandidate.claimYes) this.askToShowPhone();
+                } else if (action === 'hire') {
+                    this.hireCandidate();
+                } else if (action === 'refill') {
+                    this.refillWaterPistol();
+                }
+            }
+
+            async enterVrMode() {
+                if (this.appState !== 'PLAYING') {
+                    this.startGame();
+                }
+                if (this.vrSupported && navigator.xr) {
+                    try {
+                        const session = await navigator.xr.requestSession('immersive-vr', {
+                            optionalFeatures: ['local-floor', 'bounded-floor']
+                        });
+                        this.renderer.xr.setSession(session);
+                        return;
+                    } catch (_) {
+                        // Переходим в Stereo VR при отказе
+                    }
+                }
+                this.stereoVrActive = true;
+                document.getElementById('hud').classList.add('hidden');
+                document.getElementById('stereo-vr-ui').classList.remove('hidden');
+                this.requestFullscreen();
+                this.showToast('🥽 Stereo VR активен! Смотрите на 3D-кнопки на столе или используйте панель внизу.', 'info');
+            }
+
+            exitStereoVr() {
+                this.stereoVrActive = false;
+                document.getElementById('stereo-vr-ui').classList.add('hidden');
+                if (this.appState === 'PLAYING') {
+                    document.getElementById('hud').classList.remove('hidden');
+                }
+                this.renderer.setScissorTest(false);
+                this.renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+            }
+
+            async toggleGyroscope() {
+                const btn = document.getElementById('btnVrGyro');
+                if (this.gyroEnabled) {
+                    this.gyroEnabled = false;
+                    btn.textContent = '🧭 Гироскоп: Выкл';
+                    return;
+                }
+                try {
+                    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                        const res = await DeviceOrientationEvent.requestPermission();
+                        if (res !== 'granted') return;
+                    }
+                    this.gyroOffset = null;
+                    this.gyroEnabled = true;
+                    btn.textContent = '🧭 Гироскоп: Вкл';
+                } catch (_) {
+                    this.showToast('Гироскоп недоступен на этом устройстве', 'info');
+                }
+            }
+
+            /* ----------------- ПОЛНЫЙ ЭКРАН ----------------- */
+            requestFullscreen() {
+                const el = document.documentElement;
+                const fn = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+                if (fn) {
+                    try { fn.call(el); } catch (_) {}
+                }
+            }
+
+            toggleFullscreen() {
+                const isFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+                if (isFs) {
+                    const exit = document.exitFullscreen || document.webkitExitFullscreen;
+                    if (exit) { try { exit.call(document); } catch (_) {} }
+                } else {
+                    this.requestFullscreen();
+                }
+            }
+
+            /* ----------------- НАВИГАЦИЯ И UI ----------------- */
+            showMainMenuFromSplash(withFullscreen = false) {
+                audio.playUiClick();
+                if (withFullscreen) this.requestFullscreen();
+                const splash = document.getElementById('splash-screen');
+                splash.classList.add('fade-out');
+                setTimeout(() => splash.classList.add('hidden'), 650);
+                this.appState = 'MENU';
+                document.getElementById('main-menu').classList.remove('hidden');
+            }
+
+            startGame() {
+                audio.playUiClick();
+                this.appState = 'PLAYING';
+                document.getElementById('main-menu').classList.add('hidden');
+                document.getElementById('hud').classList.remove('hidden');
+                document.getElementById('mobile-joystick-zone').classList.add('active-mobile');
+
+                this.playerPos.set(0, 0, 2.25);
+                this.playerRig.position.copy(this.playerPos);
+                this.yaw = 0;
+                this.pitch = -0.05;
+
+                if (!this.candidateMesh) {
+                    this.spawnNextCandidate();
+                }
+                this.updateHudStats();
+                this.updateActionButtons();
+                this.updateTerminalVisuals();
+            }
+
+            returnToMenu() {
+                audio.playUiClick();
+                if (document.pointerLockElement) {
+                    document.exitPointerLock();
+                }
+                if (this.stereoVrActive) this.exitStereoVr();
+                this.appState = 'MENU';
+                document.getElementById('hud').classList.add('hidden');
+                document.getElementById('main-menu').classList.remove('hidden');
+                this.updateMenuStatsUI();
+            }
+
+            applySavedVisualPrefs() {
+                // Освещение
+                const t = LIGHT_THEMES[this.lightTheme] || LIGHT_THEMES.day;
+                this.scene.background = new THREE.Color(t.sky);
+                this.scene.fog = new THREE.Fog(t.fog, 14, 34);
+                this.sunLight.color.setHex(t.sunColor);
+                this.sunLight.intensity = t.sunIntensity;
+                this.sunLight.position.set(...t.sunPos);
+                this.hemiLight.color.setHex(t.hemiSky);
+                this.hemiLight.groundColor.setHex(t.hemiGround);
+                this.hemiLight.intensity = t.hemiIntensity;
+
+                document.querySelectorAll('.light-theme-btn').forEach(b => {
+                    b.classList.toggle('active', b.dataset.theme === this.lightTheme);
+                });
+
+                // Скин пистолета
+                const s = PISTOL_SKINS[this.pistolSkin] || PISTOL_SKINS.classic;
+                if (this.pistolBodyMat) {
+                    this.pistolBodyMat.color.setHex(s.body);
+                    this.pistolAccentMat.color.setHex(s.accent);
+                    this.pistolNozzleMat.color.setHex(s.nozzle);
+                }
+                document.querySelectorAll('.pistol-skin-btn').forEach(b => {
+                    b.classList.toggle('active', b.dataset.skin === this.pistolSkin);
+                });
+            }
+
+            updateMenuStatsUI() {
+                const rank = this.getRankInfo();
+                document.getElementById('menuRankName').textContent = rank.name;
+                document.getElementById('menuScoreText').textContent = `Принято: ${this.hiredCount} • Облито: ${this.soakedCount}`;
+                document.getElementById('menuRankProgress').style.width = `${rank.pct}%`;
+            }
+
+            updateHudStats() {
+                const rank = this.getRankInfo();
+                document.getElementById('hudHired').textContent = this.hiredCount;
+                document.getElementById('hudSoaked').textContent = this.soakedCount;
+                document.getElementById('hudStreak').textContent = this.streak;
+                document.getElementById('hudWater').textContent = `${this.waterAmmo}/${this.maxWaterAmmo}`;
+                document.getElementById('hudRank').textContent = rank.name;
+            }
+
+            showToast(msg, type = 'info') {
+                const el = document.getElementById('toast');
+                el.textContent = msg;
+                el.className = `show ${type}`;
+                clearTimeout(this.toastTimer);
+                this.toastTimer = setTimeout(() => {
+                    el.classList.remove('show');
+                }, 3100);
+            }
+
+            /* ----------------- ПРИВЯЗКА СОБЫТИЙ ----------------- */
+            bindEvents() {
+                // Заставка
+                document.getElementById('btnSplashFullscreen').addEventListener('click', () => this.showMainMenuFromSplash(true));
+                document.getElementById('btnSplashContinue').addEventListener('click', () => this.showMainMenuFromSplash(false));
+
+                // Меню
+                document.getElementById('btnMenuFsTop').addEventListener('click', () => { audio.playUiClick(); this.toggleFullscreen(); });
+                document.getElementById('btnMenuFsBanner').addEventListener('click', () => { audio.playUiClick(); this.toggleFullscreen(); });
+                document.getElementById('btnHudFs').addEventListener('click', () => { audio.playUiClick(); this.toggleFullscreen(); });
+                document.getElementById('btnVrFs').addEventListener('click', () => this.toggleFullscreen());
+
+                document.getElementById('btnStartFps').addEventListener('click', () => this.startGame());
+                document.getElementById('btnStartVr').addEventListener('click', () => this.enterVrMode());
+                document.getElementById('btnHudVr').addEventListener('click', () => this.enterVrMode());
+                document.getElementById('btnHudMenu').addEventListener('click', () => this.returnToMenu());
+
+                // Stereo VR кнопки
+                document.getElementById('btnVrExitStereo').addEventListener('click', () => this.exitStereoVr());
+                document.getElementById('btnVrGyro').addEventListener('click', () => this.toggleGyroscope());
+                document.getElementById('btnVrShoot').addEventListener('click', () => this.shootWaterPistol(null, true));
+                document.getElementById('btnVrRefill').addEventListener('click', () => this.refillWaterPistol());
+                document.getElementById('btnVrQuickStep').addEventListener('click', () => {
+                    if (this.turnPhase === 'WAITING_ASK') this.askRegisteredQuestion();
+                    else if (this.turnPhase === 'ANSWERED' && this.currentCandidate && this.currentCandidate.claimYes) this.askToShowPhone();
+                    else if (this.turnPhase === 'SHOWING_PHONE') this.hireCandidate();
+                });
+
+                // Правила и сброс прогресса (без confirm!)
+                const rulesModal = document.getElementById('rules-modal');
+                document.getElementById('btnOpenRules').addEventListener('click', () => {
+                    audio.playUiClick();
+                    this.resetConfirmArmed = false;
+                    document.getElementById('btnResetProgress').textContent = 'Сбросить прогресс';
+                    rulesModal.classList.remove('hidden');
+                });
+                const closeRules = () => { audio.playUiClick(); rulesModal.classList.add('hidden'); };
+                document.getElementById('btnCloseRules').addEventListener('click', closeRules);
+                document.getElementById('btnCloseRulesOk').addEventListener('click', closeRules);
+
+                document.getElementById('btnResetProgress').addEventListener('click', () => {
+                    const btn = document.getElementById('btnResetProgress');
+                    if (!this.resetConfirmArmed) {
+                        this.resetConfirmArmed = true;
+                        btn.textContent = 'Точно сбросить? Нажмите ещё раз';
+                        return;
+                    }
+                    this.hiredCount = 0;
+                    this.soakedCount = 0;
+                    this.streak = 0;
+                    this.saveProgress();
+                    this.updateMenuStatsUI();
+                    this.updateHudStats();
+                    this.resetConfirmArmed = false;
+                    btn.textContent = 'Прогресс сброшен ✓';
+                    this.showToast('Прогресс HR-карьеры сброшен', 'info');
+                });
+
+                // Тема освещения
+                document.querySelectorAll('.light-theme-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        audio.playUiClick();
+                        this.lightTheme = btn.dataset.theme;
+                        this.saveProgress();
+                        this.applySavedVisualPrefs();
+                    });
+                });
+
+                // Скин пистолета
+                document.querySelectorAll('.pistol-skin-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        audio.playUiClick();
+                        this.pistolSkin = btn.dataset.skin;
+                        this.saveProgress();
+                        this.applySavedVisualPrefs();
+                    });
+                });
+
+                // Звук
+                const toggleAudio = () => {
+                    audio.enabled = !audio.enabled;
+                    document.getElementById('btnMenuAudio').textContent = audio.enabled ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл';
+                    document.getElementById('btnHudAudio').textContent = audio.enabled ? '🔊' : '🔇';
+                    if (audio.enabled) audio.playUiClick();
+                };
+                document.getElementById('btnMenuAudio').addEventListener('click', toggleAudio);
+                document.getElementById('btnHudAudio').addEventListener('click', toggleAudio);
+
+                // Кнопки диалога и стрельбы
+                document.getElementById('btnAskPlavwly').addEventListener('click', () => this.askRegisteredQuestion());
+                document.getElementById('btnAskSkill').addEventListener('click', () => this.askSkillQuestion());
+                document.getElementById('btnAskProof').addEventListener('click', () => this.askToShowPhone());
+                document.getElementById('btnHireCandidate').addEventListener('click', () => this.hireCandidate());
+                document.getElementById('btnShootWater').addEventListener('click', () => this.shootWaterPistol(null, true));
+                document.getElementById('btnRefillWater').addEventListener('click', () => this.refillWaterPistol());
+                document.getElementById('btnAnswerDeskPhone').addEventListener('click', () => this.answerDeskPhone());
+
+                // Клавиатура
+                window.addEventListener('keydown', (e) => {
+                    this.keys[e.code] = true;
+                    if (this.appState !== 'PLAYING') return;
+
+                    if (e.code === 'Digit1') {
+                        if (this.turnPhase === 'WAITING_ASK') this.askRegisteredQuestion();
+                        else if (this.turnPhase === 'ANSWERED' && this.currentCandidate && this.currentCandidate.claimYes) this.askToShowPhone();
+                        else if (this.turnPhase === 'SHOWING_PHONE') this.hireCandidate();
+                    } else if (e.code === 'Digit2') {
+                        this.askSkillQuestion();
+                    } else if (e.code === 'KeyF') {
+                        this.shootWaterPistol(null, false);
+                    } else if (e.code === 'KeyR') {
+                        this.refillWaterPistol();
+                    } else if (e.code === 'KeyE') {
+                        this.handleInteractKey();
+                    } else if (e.code === 'Space' && this.onGround) {
+                        this.playerVelY = 4.5;
+                        this.onGround = false;
+                    }
+                });
+
+                window.addEventListener('keyup', (e) => {
+                    this.keys[e.code] = false;
+                });
+
+                // Мышь, Pointer Lock и клики по 3D-канвасу
+                const canvas = this.renderer.domElement;
+                canvas.addEventListener('mousedown', (e) => {
+                    if (this.appState !== 'PLAYING' || e.button !== 0) return;
+                    if (this.isPointerLocked) {
+                        if (this.hoveredTerminalBtn) {
+                            this.triggerTerminalAction(this.hoveredTerminalBtn.userData.terminalAction);
+                        } else {
+                            this.shootWaterPistol(null, false);
+                        }
+                    } else {
+                        this.isDraggingLook = true;
+                        this.dragMoved = false;
+                        this.lastPointer = { x: e.clientX, y: e.clientY };
+                    }
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (this.appState !== 'PLAYING') return;
+                    if (this.isPointerLocked) {
+                        this.yaw -= e.movementX * 0.0022;
+                        this.pitch = Math.max(-1.15, Math.min(1.15, this.pitch - e.movementY * 0.0022));
+                    } else if (this.isDraggingLook) {
+                        const dx = e.clientX - this.lastPointer.x;
+                        const dy = e.clientY - this.lastPointer.y;
+                        if (Math.abs(dx) + Math.abs(dy) > 4) this.dragMoved = true;
+                        this.yaw -= dx * 0.004;
+                        this.pitch = Math.max(-1.15, Math.min(1.15, this.pitch - dy * 0.004));
+                        this.lastPointer = { x: e.clientX, y: e.clientY };
+                    }
+                });
+
+                window.addEventListener('mouseup', () => {
+                    if (!this.isDraggingLook) return;
+                    this.isDraggingLook = false;
+                    if (!this.dragMoved && this.appState === 'PLAYING' && !this.stereoVrActive) {
+                        if (this.hoveredTerminalBtn) {
+                            this.triggerTerminalAction(this.hoveredTerminalBtn.userData.terminalAction);
+                        } else if (canvas.requestPointerLock) {
+                            try { canvas.requestPointerLock(); } catch (_) {}
+                        }
+                    }
+                });
+
+                document.addEventListener('pointerlockchange', () => {
+                    this.isPointerLocked = document.pointerLockElement === canvas;
+                    document.getElementById('pointer-lock-hint').classList.toggle('hidden', this.isPointerLocked);
+                });
+
+                // Сенсорный обзор и джойстик
+                this.bindTouchControls(canvas);
+
+                // Гироскоп
+                window.addEventListener('deviceorientation', (e) => {
+                    if (!this.gyroEnabled || e.alpha == null || e.beta == null) return;
+                    if (!this.gyroOffset) this.gyroOffset = { alpha: e.alpha, beta: e.beta };
+                    this.yaw = THREE.MathUtils.degToRad(e.alpha - this.gyroOffset.alpha);
+                    this.pitch = THREE.MathUtils.clamp(THREE.MathUtils.degToRad((e.beta - this.gyroOffset.beta) * 0.7), -1.0, 1.0);
+                });
+
+                // Ресайз окна
+                window.addEventListener('resize', () => {
+                    this.camera.aspect = window.innerWidth / window.innerHeight;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            }
+
+            bindTouchControls(canvas) {
+                let lookTouchId = null;
+                let lastTouch = { x: 0, y: 0 };
+
+                canvas.addEventListener('touchstart', (e) => {
+                    if (this.appState !== 'PLAYING') return;
+                    const t = e.changedTouches[0];
+                    lookTouchId = t.identifier;
+                    lastTouch = { x: t.clientX, y: t.clientY };
+                }, { passive: true });
+
+                canvas.addEventListener('touchmove', (e) => {
+                    if (lookTouchId === null) return;
+                    for (const t of e.changedTouches) {
+                        if (t.identifier === lookTouchId) {
+                            this.yaw -= (t.clientX - lastTouch.x) * 0.0055;
+                            this.pitch = Math.max(-1.1, Math.min(1.1, this.pitch - (t.clientY - lastTouch.y) * 0.0055));
+                            lastTouch = { x: t.clientX, y: t.clientY };
+                        }
+                    }
+                }, { passive: true });
+
+                canvas.addEventListener('touchend', (e) => {
+                    for (const t of e.changedTouches) {
+                        if (t.identifier === lookTouchId) lookTouchId = null;
+                    }
+                });
+
+                const joyZone = document.getElementById('mobile-joystick-zone');
+                const joyKnob = document.getElementById('mobile-joystick-knob');
+                let joyId = null;
+
+                joyZone.addEventListener('touchstart', (e) => {
+                    e.stopPropagation();
+                    joyId = e.changedTouches[0].identifier;
+                }, { passive: false });
+
+                joyZone.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const rect = joyZone.getBoundingClientRect();
+                    const cx = rect.left + rect.width / 2;
+                    const cy = rect.top + rect.height / 2;
+                    const maxR = rect.width * 0.38;
+                    for (const t of e.changedTouches) {
+                        if (t.identifier === joyId) {
+                            let dx = t.clientX - cx;
+                            let dy = t.clientY - cy;
+                            const dist = Math.hypot(dx, dy);
+                            if (dist > maxR) {
+                                dx = (dx / dist) * maxR;
+                                dy = (dy / dist) * maxR;
+                            }
+                            joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+                            this.joyMove.x = dx / maxR;
+                            this.joyMove.y = dy / maxR;
+                        }
+                    }
+                }, { passive: false });
+
+                const resetJoy = () => {
+                    joyId = null;
+                    joyKnob.style.transform = 'translate(0px, 0px)';
+                    this.joyMove.x = 0;
+                    this.joyMove.y = 0;
+                };
+                joyZone.addEventListener('touchend', resetJoy);
+                joyZone.addEventListener('touchcancel', resetJoy);
+            }
+
+            handleInteractKey() {
+                const p = this.playerPos;
+                if (this.deskPhoneRinging && p.distanceTo(new THREE.Vector3(this.deskPhoneWorldPos.x, 0, this.deskPhoneWorldPos.z)) < 2.2) {
+                    this.answerDeskPhone();
+                    return;
+                }
+                if (p.distanceTo(new THREE.Vector3(this.coolerWorldPos.x, 0, this.coolerWorldPos.z)) < 2.1) {
+                    this.refillWaterPistol();
+                    return;
+                }
+                if (p.distanceTo(new THREE.Vector3(this.coffeeMugWorldPos.x, 0, this.coffeeMugWorldPos.z)) < 2.1) {
+                    this.drinkCoffee();
+                    return;
+                }
+                if (this.hoveredTerminalBtn) {
+                    this.triggerTerminalAction(this.hoveredTerminalBtn.userData.terminalAction);
+                }
+            }
+
+            /* ----------------- ДВИЖЕНИЕ И КОЛЛИЗИИ ----------------- */
+            tryMovePlayer(dx, dz) {
+                const radius = 0.36;
+                const checkValid = (nx, nz) => {
+                    if (nx < -4.2 || nx > 4.2 || nz < -3.15 || nz > 3.85) return false;
+                    for (const c of this.colliders) {
+                        if (nx + radius > c.minX && nx - radius < c.maxX && nz + radius > c.minZ && nz - radius < c.maxZ) {
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+
+                if (checkValid(this.playerPos.x + dx, this.playerPos.z)) {
+                    this.playerPos.x += dx;
+                }
+                if (checkValid(this.playerPos.x, this.playerPos.z + dz)) {
+                    this.playerPos.z += dz;
+                }
+            }
+
+            updatePlayerMovement(dt, isWebXR) {
+                let moveForward = 0;
+                let moveRight = 0;
+
+                if (isWebXR) {
+                    const session = this.renderer.xr.getSession();
+                    if (session) {
+                        for (const src of session.inputSources) {
+                            if (!src.gamepad || src.gamepad.axes.length < 4) continue;
+                            const ax = src.gamepad.axes[2];
+                            const ay = src.gamepad.axes[3];
+                            if (src.handedness === 'left') {
+                                if (Math.abs(ax) > 0.15) moveRight += ax;
+                                if (Math.abs(ay) > 0.15) moveForward -= ay;
+                            } else if (src.handedness === 'right') {
+                                if (this.vrSnapCooldown <= 0 && Math.abs(ax) > 0.65) {
+                                    this.yaw -= Math.sign(ax) * (Math.PI / 6);
+                                    this.vrSnapCooldown = 0.35;
+                                }
+                            }
+                        }
+                    }
+                    this.vrSnapCooldown = Math.max(0, this.vrSnapCooldown - dt);
+                } else {
+                    if (this.keys['KeyW'] || this.keys['ArrowUp']) moveForward += 1;
+                    if (this.keys['KeyS'] || this.keys['ArrowDown']) moveForward -= 1;
+                    if (this.keys['KeyD'] || this.keys['ArrowRight']) moveRight += 1;
+                    if (this.keys['KeyA'] || this.keys['ArrowLeft']) moveRight -= 1;
+                    moveForward -= this.joyMove.y;
+                    moveRight += this.joyMove.x;
+                }
+
+                const speedBoost = this.coffeeBoostTimer > 0 ? 1.55 : 1.0;
+                const isSprint = (this.keys['ShiftLeft'] || this.keys['ShiftRight']) ? 1.48 : 1.0;
+                const speed = 3.1 * speedBoost * isSprint;
+
+                const len = Math.hypot(moveForward, moveRight);
+                if (len > 0.05) {
+                    const nf = moveForward / Math.max(1, len);
+                    const nr = moveRight / Math.max(1, len);
+                    const sin = Math.sin(this.yaw);
+                    const cos = Math.cos(this.yaw);
+                    const dx = (-sin * nf + cos * nr) * speed * dt;
+                    const dz = (-cos * nf - sin * nr) * speed * dt;
+                    this.tryMovePlayer(dx, dz);
+
+                    this.walkBobPhase += dt * 10 * isSprint;
+                    this.stepAccum += dt * isSprint;
+                    if (this.stepAccum > 0.44 && this.onGround) {
+                        this.stepAccum = 0;
+                        audio.playFootstep();
+                    }
+                }
+
+                // Прыжок и гравитация
+                if (!this.onGround || this.playerPos.y > 0) {
+                    this.playerVelY -= 12.5 * dt;
+                    this.playerPos.y += this.playerVelY * dt;
+                    if (this.playerPos.y <= 0) {
+                        this.playerPos.y = 0;
+                        this.playerVelY = 0;
+                        this.onGround = true;
+                    }
+                }
+
+                this.playerRig.position.copy(this.playerPos);
+                this.playerRig.rotation.y = this.yaw;
+
+                if (!isWebXR) {
+                    this.camera.rotation.order = 'YXZ';
+                    this.camera.rotation.x = this.pitch;
+                    this.camera.rotation.y = 0;
+                    const bobY = len > 0.05 && this.onGround ? Math.sin(this.walkBobPhase) * 0.032 : 0;
+                    this.camera.position.y = this.playerHeight + bobY;
+
+                    // Покачивание и отдача пистолета в руке
+                    this.pistolRecoil = Math.max(0, this.pistolRecoil - dt * 5.5);
+                    this.pistolGroup.position.set(
+                        this.pistolBasePos.x + Math.cos(this.walkBobPhase * 0.5) * 0.008,
+                        this.pistolBasePos.y + Math.abs(Math.sin(this.walkBobPhase * 0.5)) * 0.008,
+                        this.pistolBasePos.z + this.pistolRecoil * 0.065
+                    );
+                    this.pistolGroup.rotation.x = this.pistolRecoil * 0.24;
+                }
+            }
+
+            updateNonXrAimAndTerminal(dt) {
+                const ray = new THREE.Raycaster();
+                ray.setFromCamera(new THREE.Vector2(0, 0), this.camera);
+
+                const termHits = ray.intersectObjects(this.terminalButtons, false);
+                const prevHover = this.hoveredTerminalBtn;
+                this.hoveredTerminalBtn = termHits.length > 0 && termHits[0].distance < 3.4 ? termHits[0].object : null;
+                if (this.hoveredTerminalBtn !== prevHover) {
+                    this.updateTerminalVisuals();
+                }
+
+                const candHits = this.candidateMesh ? ray.intersectObject(this.candidateMesh, true) : [];
+                const targetLocked = Boolean(this.hoveredTerminalBtn || candHits.length > 0);
+                document.getElementById('crosshair').classList.toggle('target-locked', targetLocked);
+
+                // Stereo VR управление взглядом (авто-клик за 1.1 сек)
+                if (this.stereoVrActive) {
+                    const leftDot = document.getElementById('vrDotLeft');
+                    const rightDot = document.getElementById('vrDotRight');
+                    if (this.hoveredTerminalBtn) {
+                        leftDot.classList.add('gazing');
+                        rightDot.classList.add('gazing');
+                        if (this.gazeTarget === this.hoveredTerminalBtn) {
+                            this.gazeTime += dt;
+                            if (this.gazeTime >= 1.1) {
+                                this.triggerTerminalAction(this.hoveredTerminalBtn.userData.terminalAction);
+                                this.gazeTime = 0;
+                            }
+                        } else {
+                            this.gazeTarget = this.hoveredTerminalBtn;
+                            this.gazeTime = 0;
+                        }
+                    } else {
+                        leftDot.classList.remove('gazing');
+                        rightDot.classList.remove('gazing');
+                        this.gazeTarget = null;
+                        this.gazeTime = 0;
+                    }
+                }
+
+                // Контекстная подсказка [E]
+                const promptEl = document.getElementById('interact-prompt');
+                const p = this.playerPos;
+                if (this.deskPhoneRinging && p.distanceTo(new THREE.Vector3(this.deskPhoneWorldPos.x, 0, this.deskPhoneWorldPos.z)) < 2.2) {
+                    promptEl.textContent = '[E] Ответить директору Plavwly';
+                    promptEl.classList.remove('hidden');
+                } else if (p.distanceTo(new THREE.Vector3(this.coolerWorldPos.x, 0, this.coolerWorldPos.z)) < 2.1) {
+                    promptEl.textContent = '[E] Заправить водяной пистолет у кулера';
+                    promptEl.classList.remove('hidden');
+                } else if (p.distanceTo(new THREE.Vector3(this.coffeeMugWorldPos.x, 0, this.coffeeMugWorldPos.z)) < 2.1) {
+                    promptEl.textContent = '[E] Выпить кофе (ускорение бега)';
+                    promptEl.classList.remove('hidden');
+                } else if (this.hoveredTerminalBtn) {
+                    promptEl.textContent = '[E / ЛКМ] Нажать кнопку на 3D-терминале';
+                    promptEl.classList.remove('hidden');
+                } else {
+                    promptEl.classList.add('hidden');
+                }
+            }
+
+            /* ----------------- ГЛАВНЫЙ ЦИКЛ АНИМАЦИИ ----------------- */
+            animate() {
+                const dt = Math.min(0.05, this.clock.getDelta());
+                const elapsed = this.clock.elapsedTime;
+                const isWebXR = this.renderer.xr.isPresenting;
+
+                // Настенные часы
+                if (Math.floor(elapsed * 2) !== this.lastClockTick) {
+                    this.lastClockTick = Math.floor(elapsed * 2);
+                    this.updateWallClock(elapsed);
+                }
+
+                // Солнечные пылинки
+                for (let i = 0; i < this.dustMotes.length; i++) {
+                    const m = this.dustMotes[i];
+                    m.position.y += Math.sin(elapsed * 0.9 + m.userData.phase) * 0.0007;
+                    m.position.x += Math.cos(elapsed * 0.6 + m.userData.phase) * 0.0004;
+                }
+
+                // Лёгкий пар над кофе
+                if (this.coffeeMugWorldPos && Math.random() < 0.14) {
+                    const puff = new THREE.Mesh(
+                        this.sharedSteamGeo,
+                        new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35 })
+                    );
+                    puff.position.set(
+                        this.coffeeMugWorldPos.x + (Math.random() - 0.5) * 0.03,
+                        this.coffeeMugWorldPos.y,
+                        this.coffeeMugWorldPos.z + (Math.random() - 0.5) * 0.03
+                    );
+                    puff.userData = { life: 1.3 };
+                    this.scene.add(puff);
+                    this.steamParticles.push(puff);
+                }
+                for (let i = this.steamParticles.length - 1; i >= 0; i--) {
+                    const s = this.steamParticles[i];
+                    s.position.y += dt * 0.24;
+                    s.scale.multiplyScalar(1 + dt * 0.7);
+                    s.userData.life -= dt;
+                    s.material.opacity = Math.max(0, s.userData.life * 0.26);
+                    if (s.userData.life <= 0) {
+                        this.scene.remove(s);
+                        this.steamParticles.splice(i, 1);
+                    }
+                }
+
+                // Плавное открытие/закрытие офисной двери
+                this.doorAngle += (this.doorTargetAngle - this.doorAngle) * Math.min(1, dt * 6);
+                if (this.doorPivot) {
+                    this.doorPivot.rotation.y = this.doorAngle;
+                }
+
+                // Камера в меню (спокойный панорамный пролёт по офису)
+                if (this.appState !== 'PLAYING' && !isWebXR) {
+                    const angle = elapsed * 0.18;
+                    this.playerRig.position.set(Math.sin(angle) * 1.45, 0, 2.35 + Math.cos(angle) * 0.35);
+                    this.playerRig.rotation.y = Math.sin(angle) * 0.32;
+                    this.camera.position.set(0, 1.72, 0);
+                    this.camera.rotation.set(-0.08, 0, 0);
+                    this.pistolGroup.visible = false;
+                } else {
+                    this.pistolGroup.visible = true;
+                    this.updatePlayerMovement(dt, isWebXR);
+
+                    if (!isWebXR) {
+                        this.updateNonXrAimAndTerminal(dt);
+                    }
+
+                    // Таймер турбо-кофе
+                    if (this.coffeeBoostTimer > 0) {
+                        this.coffeeBoostTimer = Math.max(0, this.coffeeBoostTimer - dt);
+                        if (this.coffeeBoostTimer === 0) {
+                            document.getElementById('coffeeBoostBadge').classList.add('hidden');
+                        }
+                    }
+
+                    // Звонок директора на красный телефон
+                    if (!this.deskPhoneRinging) {
+                        this.deskPhoneTimer -= dt;
+                        if (this.deskPhoneTimer <= 0) {
+                            this.deskPhoneRinging = true;
+                            this.deskPhoneRingSoundTimer = 0;
+                            this.updateActionButtons();
+                            this.showToast('☎️ Звонит красный телефон на столе! Нажмите [E] рядом с ним!', 'info');
+                        }
+                    } else {
+                        this.deskPhoneRingSoundTimer -= dt;
+                        if (this.deskPhoneRingSoundTimer <= 0) {
+                            audio.playPhoneRing();
+                            this.deskPhoneRingSoundTimer = 2.4;
+                        }
+                        this.deskHandset.position.y = 0.105 + Math.abs(Math.sin(elapsed * 26)) * 0.018;
+                        this.deskHandset.rotation.z = Math.sin(elapsed * 32) * 0.08;
+                    }
+
+                    // Анимация кандидата
+                    this.updateCandidateAnimation(dt, elapsed);
+                }
+
+                // Физика капель воды, луж и конфетти
+                this.updateParticles(dt);
+
+                // Рендер (обычный / WebXR / Stereo VR)
+                if (this.stereoVrActive && !isWebXR) {
+                    const w = window.innerWidth;
+                    const h = window.innerHeight;
+                    this.camera.aspect = (w / 2) / h;
+                    this.camera.updateProjectionMatrix();
+                    this.camera.updateMatrixWorld();
+                    this.stereoCam.update(this.camera);
+
+                    this.renderer.setScissorTest(true);
+                    this.renderer.setScissor(0, 0, w / 2, h);
+                    this.renderer.setViewport(0, 0, w / 2, h);
+                    this.renderer.render(this.scene, this.stereoCam.cameraL);
+
+                    this.renderer.setScissor(w / 2, 0, w / 2, h);
+                    this.renderer.setViewport(w / 2, 0, w / 2, h);
+                    this.renderer.render(this.scene, this.stereoCam.cameraR);
+                    this.renderer.setScissorTest(false);
+                } else {
+                    this.renderer.render(this.scene, this.camera);
+                }
+            }
+
+            updateCandidateAnimation(dt, elapsed) {
+                if (!this.candidateMesh) return;
+
+                // Моргание глаз
+                const blink = (elapsed % 3.6) > 3.48 ? 0.12 : 1.0;
+                for (const eye of this.candidateEyes) {
+                    eye.scale.y = blink;
+                }
+
+                if (this.turnPhase === 'WALK_IN') {
+                    // Идёт из коридора к столу (0, 0, -0.35)
+                    const wp1 = new THREE.Vector3(2.8, 0, -1.75);
+                    const deskSpot = new THREE.Vector3(0, 0, -0.35);
+                    const target = this.candidateMesh.position.x > 2.9 ? wp1 : deskSpot;
+                    const dir = target.clone().sub(this.candidateMesh.position);
+                    const dist = dir.length();
+                    if (dist < 0.08) {
+                        this.candidateMesh.position.copy(deskSpot);
+                        this.candidateMesh.rotation.y = 0;
+                        this.turnPhase = 'WAITING_ASK';
+                        this.doorTargetAngle = 0;
+                        this.setDialogue(this.currentCandidate.name, '«Здравствуйте! Я на собеседование разработчиком в Plavwly!»');
+                        this.updateActionButtons();
+                        this.updateTerminalVisuals();
+                    } else {
+                        dir.normalize();
+                        this.candidateMesh.position.addScaledVector(dir, dt * 2.4);
+                        this.candidateMesh.position.y = Math.abs(Math.sin(elapsed * 9)) * 0.08;
+                        this.candidateMesh.rotation.y = Math.atan2(dir.x, dir.z);
+                    }
+                } else if (this.turnPhase === 'WAITING_ASK' || this.turnPhase === 'ANSWERED' || this.turnPhase === 'SHOWING_PHONE') {
+                    // Мягкое дыхание и поворот лицом к игроку
+                    this.candidateMesh.position.y = Math.sin(elapsed * 2.8) * 0.025;
+                    const dx = this.playerPos.x - this.candidateMesh.position.x;
+                    const dz = this.playerPos.z - this.candidateMesh.position.z;
+                    const targetRot = Math.atan2(dx, dz);
+                    this.candidateMesh.rotation.y += (targetRot - this.candidateMesh.rotation.y) * Math.min(1, dt * 5);
+                } else if (this.turnPhase === 'DANCING') {
+                    // Зажигательный победный танец!
+                    this.phaseTimer -= dt;
+                    this.candidateMesh.position.y = Math.abs(Math.sin(elapsed * 12)) * 0.36;
+                    this.candidateMesh.rotation.y += dt * 6.5;
+                    this.candidateMesh.rotation.z = Math.sin(elapsed * 14) * 0.22;
+                    if (this.phaseTimer <= 0) {
+                        this.candidateMesh.rotation.z = 0;
+                        this.spawnNextCandidate();
+                    }
+                } else if (this.turnPhase === 'FLEEING') {
+                    // Убегает обратно в коридор через открытую дверь
+                    const exitSpot = new THREE.Vector3(6.2, 0, -1.75);
+                    const dir = exitSpot.clone().sub(this.candidateMesh.position);
+                    const dist = dir.length();
+                    if (dist < 0.25) {
+                        this.spawnNextCandidate();
+                    } else {
+                        dir.normalize();
+                        this.candidateMesh.position.addScaledVector(dir, dt * 4.5);
+                        this.candidateMesh.position.y = Math.abs(Math.sin(elapsed * 16)) * 0.14;
+                        this.candidateMesh.rotation.y = Math.atan2(dir.x, dir.z);
+                    }
+                }
+            }
+
+            updateParticles(dt) {
+                for (let i = this.waterDroplets.length - 1; i >= 0; i--) {
+                    const d = this.waterDroplets[i];
+                    d.userData.vel.y -= 9.8 * dt;
+                    d.position.addScaledVector(d.userData.vel, dt);
+                    d.userData.life -= dt;
+                    if (d.position.y <= 0.02 || d.userData.life <= 0) {
+                        if (d.position.y <= 0.02 && Math.random() < 0.14) {
+                            this.spawnPuddle(d.position.x, d.position.z);
+                        }
+                        this.scene.remove(d);
+                        this.waterDroplets.splice(i, 1);
+                    }
+                }
+
+                for (let i = this.puddles.length - 1; i >= 0; i--) {
+                    const p = this.puddles[i];
+                    p.userData.life -= dt;
+                    if (p.userData.life < 2) {
+                        p.material.opacity = Math.max(0, (p.userData.life / 2) * 0.42);
+                    }
+                    if (p.userData.life <= 0) {
+                        this.scene.remove(p);
+                        this.puddles.splice(i, 1);
+                    }
+                }
+
+                for (let i = this.confetti.length - 1; i >= 0; i--) {
+                    const c = this.confetti[i];
+                    c.userData.vel.y -= 5.2 * dt;
+                    c.position.addScaledVector(c.userData.vel, dt);
+                    c.rotation.x += c.userData.rot.x * dt;
+                    c.rotation.y += c.userData.rot.y * dt;
+                    c.userData.life -= dt;
+                    if (c.position.y < 0.02 || c.userData.life <= 0) {
+                        this.scene.remove(c);
+                        this.confetti.splice(i, 1);
+                    }
+                }
+            }
+        }
+
+        /* =========================================================
+           4. НАДЁЖНЫЙ ЗАПУСК ПРИЛОЖЕНИЯ
+           ========================================================= */
+        function bootPlavwlyOffice() {
+            if (window.officeGame) return;
+            if (typeof THREE === 'undefined') {
+                const errDiv = document.createElement('div');
+                errDiv.id = 'fatal-error';
+                errDiv.innerHTML = '<div><h2>Не удалось загрузить Three.js</h2><p style="margin-top:10px;color:#94a3b8;">Проверьте подключение к интернету и обновите страницу.</p></div>';
+                document.body.appendChild(errDiv);
+                return;
+            }
+            try {
+                window.officeGame = new PlavwlyOfficeGame();
+            } catch (err) {
+                console.error('Ошибка запуска Plavwly Office 3D:', err);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bootPlavwlyOffice);
+        } else {
+            bootPlavwlyOffice();
+        }
+    </script>
+</body>
+</html>
